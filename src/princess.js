@@ -26,14 +26,45 @@ var Princess = null;
 			config = config || {};
 			var self = this;
 			var size = cc.winSize;	//画面サイズ
-			var sceneType = config.sceneType || 'game';
 			var animType = config.animType || 'normal';
+			self.sceneType = config.sceneType || 'game';
 			
 			//スーパークラスのコンストレクタ実行
 			self.chara = this.superclass.__construct.call(this, config);
 			
-			self.chara.x = config.x || self.chara.width / 2;
-			self.chara.y = config.y || size.height / 2;
+			var dungeonType = config.dungeonType || null;
+			var startPos = {};
+			var goalPos = {};
+			
+			switch (dungeonType) {
+				case 'vertical':
+					//スタート地点
+					startPos.x = size.width / 2 - self.chara.width;
+					startPos.y = self.chara.height / 2;
+					//ゴール地点
+					goalPos.x = size.width / 2 + self.chara.width;
+					goalPos.y = size.height - self.chara.height / 2;
+					break;
+				case 'horizontal':
+					//スタート地点
+					startPos.x = self.chara.width / 2;
+					startPos.y = size.height / 2;
+					//ゴール地点
+					goalPos.x = size.width - self.chara.width / 2;
+					goalPos.y = size.height / 2;
+					break;
+				default:
+					//スタート地点
+					startPos.x = size.width / 2 - self.chara.width;
+					startPos.y = self.chara.height / 2;
+					//ゴール地点
+					goalPos.x = size.width / 2 + self.chara.width;
+					goalPos.y = size.height - self.chara.height / 2;
+					break;
+			};
+			
+			self.chara.x = config.x || startPos.x;
+			self.chara.y = config.y || startPos.y;
 
 			//アニメーション開始
 			self._animStart({
@@ -41,24 +72,7 @@ var Princess = null;
 			});
 			
 			//ターゲット
-			self._target = config.target || {x: size.width - self.chara.width / 2, y: size.height / 2};
-			
-			//ターゲットまで移動
-			self._moveToTarget({
-				target: self._target,
-				duration: 5,
-				complete: function () {
-					if (sceneType === 'title') {
-						return;
-					}
-					//return;
-					//メインページ
-					cc.director.runScene(cc.TransitionFade(1.2, new OverScene({
-						level: 1
-					})));
-					return;
-				}
-			});
+			self._target = config.target || goalPos;
 
 			return self.chara;
 		},
@@ -70,6 +84,30 @@ var Princess = null;
 		update: function () {
 			return;
 		},
+		
+		/**
+		 * 移動開始
+		 */
+		moveStart: function () {
+			var self = this;
+
+			//ターゲットまで移動
+			self._moveToTarget({
+				target: self._target,
+				duration: 5,
+				complete: function () {
+					if (self.sceneType === 'title') {
+						return;
+					}
+					return;
+					//メインページ
+					cc.director.runScene(cc.TransitionFade(1.2, new OverScene({
+						level: 1
+					})));
+					return;
+				}
+			});
+		}
 		
 
 	});

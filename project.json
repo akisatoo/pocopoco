@@ -23,14 +23,11 @@
         "src/slotcharacter.js",
         "src/slot.js",
         "src/princess.js",
-        "src/hero.js",
-        "src/magician.js",
-        "src/magicbullet.js",
-        "src/enemy.js",
         "src/app.js",
         "src/game.js",
         "src/next.js",
         "src/over.js",
+        "src/DungeonSelect.js",
         "src/pattern/move/move0.js"
     ]
 }

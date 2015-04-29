@@ -21,11 +21,34 @@ var BaseEnemy = null;
 			config = config || {};
 			var self = this;
 			self.chara = BaseEnemy.prototype.superclass.__construct.call(this, config);
+			
+			var size = cc.winSize;
+			var dungeonType = config.dungeonType || null;
 
 			//初期化
 			self.isUpdate = true;
 			self._beforeType = null;
 			self._target = config.target || {};	//ターゲットの配列を格納
+			
+			//出現ポイント
+			var appearPoint = {};
+			switch (dungeonType) {
+				case 'vertical':
+					appearPoint.x = Math.floor(Math.random() * 2) === 0 ? 0 : size.width;
+					appearPoint.y = Math.floor(Math.random() * size.height);
+					break;
+				case 'horizontal':
+					appearPoint.x = Math.floor(Math.random() * size.width);
+					appearPoint.y = Math.floor(Math.random() * 2) === 0 ? 0 : size.height;
+					break;
+				default:
+					appearPoint.x = Math.floor(Math.random() * 2) === 0 ? 0 : size.width;
+					appearPoint.y = Math.floor(Math.random() * size.height);
+					break;
+			};
+			
+			self.chara.x = appearPoint.x;
+			self.chara.y = appearPoint.y;
 			
 			return self.chara;
 		},

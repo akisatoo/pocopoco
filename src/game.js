@@ -11,6 +11,8 @@ var GameLayer = cc.LayerColor.extend({
 		var self = this;
 		var size = cc.winSize;
 		
+		self.dungeonData = config.data || {};
+		
 		//初期化
 		self.princess = null;
 		self.heros = [];
@@ -45,6 +47,7 @@ var GameLayer = cc.LayerColor.extend({
 		
 		//姫様
 		self.princess = new Princess({
+			dungeonType: self.dungeonData.type,
 			image: res.PrincessRight1
 		});
 		self.addChild(self.princess);
@@ -53,13 +56,27 @@ var GameLayer = cc.LayerColor.extend({
 		var enemyMax = 10;
 		for (var i = 0; i < enemyMax; i++) {
 			var enemy = new BaseEnemy(_.extend(manager.enemyDataList['underling'], {
-				x: Math.floor(Math.random() * size.width),
-				y: i % 2 === 0 ? 0 : size.height,
+				dungeonType: self.dungeonData.type,
 				target: self.princess
 			}));
 			self.addChild(enemy);
 			self.enemys.push(enemy);
 		}
+		
+		//ゲームスタートまでのカウントダウン
+		self.countDown = 3;
+		
+		//カウントダウンラベル
+		var countLabel = cc.LabelTTF(self.countDown, "Helvetica", 80);
+		countLabel.setColor(cc.color(0, 0, 0));
+		countLabel.setPosition(size.width / 2, size.height / 2);
+		countLabel.setAnchorPoint(0.5, 0.5);
+		self.addChild(countLabel);
+		
+		//3秒カウントダウン
+		setTimeout(function () {
+			self.startCountDown(countLabel);
+		}, 1000);
 
 		//タッチイベント登録
 		self._addTouchEvent();
@@ -70,15 +87,41 @@ var GameLayer = cc.LayerColor.extend({
 		return true;
 	},
 	
-	/**
-	 * ヒーローの管理配列
-	 */
-	heros: [],
+	dungeonData: null,	//ダンジョン情報
+	heros: [],	//ヒーローの管理配列
+	enemys: [],	//敵の管理配列
+	countDown: 0,	//開始までのカウントダウン
 	
 	/**
-	 * 敵の管理配列
+	 * カウントダウン開始
 	 */
-	enemys: [],
+	startCountDown: function (label) {
+		var self = this;
+		var countInterval = setInterval(function () {
+			self.countDown -= 1;
+
+			if (self.countDown <= 0) {
+				clearInterval(countInterval);
+				label.setString('GO!!');
+
+				var fadeout = cc.FadeOut(2);
+				//動作後の処理
+				var comp = new cc.CallFunc(function () {
+					self.removeChild(label);
+					label = null;
+					return;
+				}, self);
+				var seq = cc.Sequence.create(fadeout, comp);
+				label.runAction(seq);
+
+				self.princess._instance.moveStart();
+				return;
+			}
+			label.setString(self.countDown);
+			return;
+		}, 1000);
+		return;
+	},
 	
 	/**
 	 * アップデート
@@ -86,14 +129,17 @@ var GameLayer = cc.LayerColor.extend({
 	update: function () {
 		var self = this;
 		
+		if (self.countDown > 0) {
+			return;
+		}
+		
 		self.princess._instance.update();	//姫のupdate
 		
 		_.each(self.enemys, function (enemy, index) {
 			if (!enemy) {
 				var size = cc.winSize;
 				var ene = new BaseEnemy(_.extend(manager.enemyDataList['underling'], {
-					x: Math.floor(Math.random() * size.width),
-					y: Math.floor(Math.random() * 2) === 0 ? -32 : size.height + 32,
+					dungeonType: self.dungeonData.type,
 					target: self.princess
 				}));
 				self.addChild(ene);

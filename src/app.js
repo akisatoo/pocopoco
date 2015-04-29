@@ -36,7 +36,7 @@ var TitleLayer = cc.LayerColor.extend({
 			function () {
 				
 				//メインページ
-				cc.director.runScene(cc.TransitionFade(1.2, new GameScene({
+				cc.director.runScene(cc.TransitionFade(1.2, new DungeonSelectScene({
 					level: 1,
 					warfunds: 10000
 				})));
