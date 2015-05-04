@@ -34,7 +34,7 @@ var Character = null;
 			self._baseHp = config.hitpoint || 1;
 			self._baseAt = config.attack || 1;
 			self._baseSp = config.speed || 1;
-			self._hitpoint = config.hitpoint || 1;
+			self._hitpoint = config.hitpoint || 10;
 			self._attack = config.attack || 1;
 			self._speed = config.speed || 1;
 			self._level = config.level || 1;
@@ -104,6 +104,9 @@ var Character = null;
 
 			var self = this;
 			var target = config.target || null;
+			var complete = config.complete || function () {};
+			
+			var distance = 80;	//弾かれる距離
 
 			if (!self.chara || !target) {
 				return;
@@ -118,15 +121,18 @@ var Character = null;
 			//はじかれる時の方向
 			if (target.x > self.chara.x) {
 				//右向き
-				var directionX = -200;
+				distance *= -1;
 			} else if (target.x < self.chara.x) {
 				//左向き
-				var directionX = 200;
+				distance *= 1;
 			}
 
 
-			var jump = cc.JumpBy.create(1, cc.p(Math.floor(Math.random() * directionX), 20), 20, 1);
-			self.chara.runAction(jump);
+			var jump = cc.JumpBy.create(1, cc.p(Math.floor(Math.random() * distance), 20), 20, 2);
+			//動作後の処理
+			var comp = new cc.CallFunc(complete, self);
+			var seq = cc.Sequence.create(jump, comp);
+			self.chara.runAction(seq);
 
 			return;
 		},

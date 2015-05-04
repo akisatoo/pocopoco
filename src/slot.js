@@ -113,7 +113,6 @@ var Slot = null;
 						//各スロットの矩形(アンカーポイントの修正で高さがずれているので調整)
 						var rect = cc.rect(slot.x, slot.y - slot.height, slot.width, slot.height);
 						if (cc.rectContainsPoint(rect, localPos)) {
-							cc.log(slot._instance._slotData.name);
 							manager.currentChara = slot._instance._slotData.name;
 							selectIndex = index;
 							isTouch = true;

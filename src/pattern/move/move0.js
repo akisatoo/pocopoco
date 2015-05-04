@@ -7,7 +7,7 @@ App.pattern.move = App.pattern.move || [];
 	/**
 	 * 移動パターン
 	 * 
-	 * 直進型
+	 * 追尾型
 	 * id: 0
 	 */
 	App.pattern.move[0] = function (config) {
@@ -17,7 +17,8 @@ App.pattern.move = App.pattern.move || [];
 
 	App.pattern.move[0].prototype = {
 		
-		straight: 'Straight',
+		id: 0,
+		type: 'Homing',
 		
 		/**
 		 * 移動法
@@ -26,28 +27,14 @@ App.pattern.move = App.pattern.move || [];
 			config = config || {};
 			var self = this;
 			var target = config.target;
-/*
-			var disX = target.x - self.chara.x;
-			var disY = target.y - self.chara.y;
+			var speed = 2;
 
-			self._changeAnimPattern({}, {target: target});
+			//radianをだす
+			var rad = Math.atan2(target.y - self.chara.y, target.x - self.chara.x);
+			self.chara.x += speed * Math.cos(rad);
+			self.chara.y += speed * Math.sin(rad);
 
-			if (disX > 0) {
-				//ターゲットが右
-				self.chara.x = self.chara.x + 1;
-			} else if (disX < 0) {
-				//ターゲットが左
-				self.chara.x = self.chara.x - 1;
-			}
 
-			if (disY > 0) {
-				//ターゲットが上
-				self.chara.y = self.chara.y + 1;
-			} else if (disY < 0) {
-				//ターゲットが
-				self.chara.y = self.chara.y - 1;
-			}
-*/
 			return;
 		},
 

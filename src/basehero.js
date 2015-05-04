@@ -13,6 +13,7 @@ var BaseHero = null;
 
 		_targets: null,	//ターゲット
 		_reactionflug: null, //はじかれる処理用フラグ
+		_isDamage: null,	//ダメージを受けている状態か？
 
 		/**
 		 * コンストラクタ
@@ -26,9 +27,7 @@ var BaseHero = null;
 			self.isUpdate = false;
 			self._beforeType = null;
 			self._targets = config.targets || [];	//ターゲット(敵)の配列を格納
-			
-			//はじかれる処理用フラグ
-			self._reactionflg = true;
+			self._isDamage = false;	//ダメージを受けている状態か？無敵状態
 
 			//バウンドアニメーション
 			self._animBounds();
@@ -117,11 +116,19 @@ var BaseHero = null;
 			if (self._targets.length === 0 || !myTarget) {
 				return;
 			}
+			
+			//ダメージ状態ならあたり判定は飛ばす
+			if (self._isDamage === true) {
+				return;
+			}
 
 			//あたり判定
 			if (self._hitTest({target: myTarget})) {
+				
+				self._isDamage = true;	//ダメージ状態に
+				
 				//HPを減らす
-				self._hitpoint--;
+				self._hitpoint = self._hitpoint - myTarget._instance._attack;
 				if(self._hitpoint <= 0){
 					// キャラが消える処理の実行
 					self._hitRotation({
@@ -134,15 +141,14 @@ var BaseHero = null;
 
 				} else {
 					//キャラが跳ね返る動きの実行
-					if(self._reactionflg == true){
-						self._reactionflg = false;
-						self._hitReaction({
-							target: myTarget
-						});
-					} else {
-						self._reactionflg = true;
-					}
-
+					self._hitReaction({
+						target: myTarget,
+						complete: function () {
+							//ダメージ状態から通常状態に戻す
+							self._isDamage = false;
+							return;
+						}
+					});
 				}
 
 				//ターゲット
@@ -154,19 +160,21 @@ var BaseHero = null;
 					}
 				});
 			}
-/*
+			/*
 			//ターゲットまで移動
 			self._moveToTarget({
 				start: self._changeAnimPattern,	//アニメーションの向きを更新
 				target: myTarget
 			});
-*/
+			 */
 
 			//updateで移動
 			self._updateMove({
 				target: myTarget
 			});
-
+			
+			//キャラのアニメーション向きを更新
+			self._changeAnimPattern({}, {target: myTarget});
 
 			return;
 		},
@@ -174,6 +182,8 @@ var BaseHero = null;
 
 		/**
 		 * updateでの移動法
+		 * 
+		 * patternのmoveでオーバライドして使用
 		 */
 		_updateMove: function (config) {
 			config = config || {};
@@ -182,8 +192,6 @@ var BaseHero = null;
 
 			var disX = target.x - self.chara.x;
 			var disY = target.y - self.chara.y;
-
-			self._changeAnimPattern({}, {target: target});
 
 			if (disX > 0) {
 				//ターゲットが右
