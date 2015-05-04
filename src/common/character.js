@@ -17,6 +17,9 @@ var Character = null;
 
 	Character.prototype = lib.extend(BaseCharacter.prototype, {
 		
+		_isDamage: null,	//ダメージを受けている状態か？
+
+		
 		/**
 		 * アニメーションパターン
 		 */
@@ -40,6 +43,8 @@ var Character = null;
 			self._level = config.level || 1;
 			self._exp = config.exp || 0;
 			
+			self._isDamage = false;	//ダメージを受けている状態か？無敵状態
+			
 			//キャラクターのアニメーションパターン設定
 			self._animPattern = config.animPattern || {};
 
@@ -47,7 +52,8 @@ var Character = null;
 			lib.extendPattern({
 				base: self,
 				patterns: {
-					move: App.pattern.move[config.movePattern]
+					move: App.pattern.move[config.movePattern],
+					attack: App.pattern.attack[config.attackPattern]
 				}
 			});
 			

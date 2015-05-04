@@ -18,6 +18,7 @@
         "src/common/attackcharacter.js",
         "src/common/herocharacter.js",
         "src/common/character.js",
+        "src/basebullet.js",
         "src/basehero.js",
         "src/baseenemy.js",
         "src/slotcharacter.js",
@@ -28,6 +29,7 @@
         "src/next.js",
         "src/over.js",
         "src/DungeonSelect.js",
-        "src/pattern/move/move0.js"
+        "src/pattern/move/move0.js",
+        "src/pattern/attack/attack0.js"
     ]
 }

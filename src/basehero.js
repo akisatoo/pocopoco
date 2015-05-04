@@ -12,8 +12,6 @@ var BaseHero = null;
 	BaseHero.prototype = lib.extend(Character.prototype, {
 
 		_targets: null,	//ターゲット
-		_reactionflug: null, //はじかれる処理用フラグ
-		_isDamage: null,	//ダメージを受けている状態か？
 
 		/**
 		 * コンストラクタ
@@ -27,8 +25,10 @@ var BaseHero = null;
 			self.isUpdate = false;
 			self._beforeType = null;
 			self._targets = config.targets || [];	//ターゲット(敵)の配列を格納
-			self._isDamage = false;	//ダメージを受けている状態か？無敵状態
 
+			//攻撃
+			self._initAttack();
+			
 			//バウンドアニメーション
 			self._animBounds();
 
@@ -121,6 +121,11 @@ var BaseHero = null;
 			if (self._isDamage === true) {
 				return;
 			}
+			
+			//攻撃
+			self._updateAttack({
+				target: myTarget
+			});
 
 			//あたり判定
 			if (self._hitTest({target: myTarget})) {
@@ -152,13 +157,29 @@ var BaseHero = null;
 				}
 
 				//ターゲット
-				myTarget._instance._hitRotation({
-					complete: function () {
-						manager.gameStage.removeChild(myTarget, true);
-						self._targets[targetIndex] = null;
-						return;
-					}
-				});
+				//ダメージ状態に
+				myTarget._instance._isDamage = true;
+				//HPを減らす
+				myTarget._instance._hitpoint = myTarget._instance._hitpoint - self._attack;
+				if(myTarget._instance._hitpoint <= 0){
+					myTarget._instance._hitRotation({
+						complete: function () {
+							manager.gameStage.removeChild(myTarget, true);
+							self._targets[targetIndex] = null;
+							return;
+						}
+					});
+				} else {
+					//キャラが跳ね返る動きの実行
+					myTarget._instance._hitReaction({
+						target: self.chara,
+						complete: function () {
+							//ダメージ状態から通常状態に戻す
+							myTarget._instance._isDamage = false;
+							return;
+						}
+					});
+				}
 			}
 			/*
 			//ターゲットまで移動
@@ -189,28 +210,26 @@ var BaseHero = null;
 			config = config || {};
 			var self = this;
 			var target = config.target;
-
-			var disX = target.x - self.chara.x;
-			var disY = target.y - self.chara.y;
-
-			if (disX > 0) {
-				//ターゲットが右
-				self.chara.x = self.chara.x + 1;
-			} else if (disX < 0) {
-				//ターゲットが左
-				self.chara.x = self.chara.x - 1;
-			}
-
-			if (disY > 0) {
-				//ターゲットが上
-				self.chara.y = self.chara.y + 1;
-			} else if (disY < 0) {
-				//ターゲットが
-				self.chara.y = self.chara.y - 1;
-			}
-
 			return;
 		},
+		
+		/**
+		 * 攻撃初期化
+		 * 
+		 * patternでオーバライドする
+		 */
+		_initAttack: function (config) {},
+
+
+
+		/**
+		 * 攻撃update
+		 * 
+		 * patternでオーバライドする
+		 */
+		_updateAttack: function (config) {},
+		
+		
 	});
 
 	App.basehero = BaseHero;

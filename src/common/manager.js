@@ -133,7 +133,8 @@ var Manager = null;
 					right: [res.MagicianRight1, res.MagicianRight2],
 					left: [res.MagicianLeft1, res.MagicianLeft2]
 				},
-				movePattern: 0
+				//movePattern: 0,
+				attackPattern: 0
 			}
 		},
 		

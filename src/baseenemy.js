@@ -61,7 +61,7 @@ var BaseEnemy = null;
 			var self = this;
 
 			//updateの準備がOKか
-			if (!self.isUpdate) {
+			if (!self.isUpdate || self._isDamage === true) {
 				return;
 			}
 
