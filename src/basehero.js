@@ -25,6 +25,7 @@ var BaseHero = null;
 			self.isUpdate = false;
 			self._beforeType = null;
 			self._targets = config.targets || [];	//ターゲット(敵)の配列を格納
+			self.princess = config.princess || null;	//守るターゲット
 
 			//攻撃
 			self._initAttack();
@@ -85,6 +86,8 @@ var BaseHero = null;
 
 		/**
 		 * 最短のターゲットを検索し移動
+		 * 
+		 * patternでオーバライドすることでターゲットを選択できるようになっている
 		 */
 		_searchTarget: function () {
 			var self = this;
@@ -134,7 +137,7 @@ var BaseHero = null;
 				
 				//HPを減らす
 				self._hitpoint = self._hitpoint - myTarget._instance._attack;
-				if(self._hitpoint <= 0){
+				if (self._hitpoint <= 0) {
 					// キャラが消える処理の実行
 					self._hitRotation({
 						complete: function () {

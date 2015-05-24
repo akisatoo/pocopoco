@@ -13,6 +13,7 @@ var GameLayer = cc.LayerColor.extend({
 		
 		self.dungeonData = config.data || {};
 		
+		
 		//初期化
 		self.princess = null;
 		self.heros = [];
@@ -26,6 +27,11 @@ var GameLayer = cc.LayerColor.extend({
 		background.x = size.width / 2;
 		background.y = size.height / 2;
 		self.addChild(background, 0);
+		
+		var gameStage = this;
+		//gameStage.setCascadeOpacityEnabled(true);
+		manager.gameStage = this;
+		
 		
 		//TODO:メニューから選択したものが入る
 		var slotData = [
@@ -43,14 +49,14 @@ var GameLayer = cc.LayerColor.extend({
 		});
 		slotBlock.x = size.width / 2;
 		slotBlock.y = slotBlock.height / 2 + 10;
-		self.addChild(slotBlock, 9999);
+		gameStage.addChild(slotBlock, 9999);
 		
 		//姫様
 		self.princess = new Princess({
 			dungeonType: self.dungeonData.type,
 			image: res.PrincessRight1
 		});
-		self.addChild(self.princess);
+		gameStage.addChild(self.princess);
 		
 		//敵の生成
 		var enemyMax = 10;
@@ -59,19 +65,21 @@ var GameLayer = cc.LayerColor.extend({
 				dungeonType: self.dungeonData.type,
 				target: self.princess
 			}));
-			self.addChild(enemy);
+			gameStage.addChild(enemy);
 			self.enemys.push(enemy);
 		}
 		
 		//ゲームスタートまでのカウントダウン
 		self.countDown = 3;
+		//アップデートの処理を制限しない
+		self.isUpdate = true;
 		
 		//カウントダウンラベル
 		var countLabel = cc.LabelTTF(self.countDown, "Helvetica", 80);
 		countLabel.setColor(cc.color(0, 0, 0));
 		countLabel.setPosition(size.width / 2, size.height / 2);
 		countLabel.setAnchorPoint(0.5, 0.5);
-		self.addChild(countLabel);
+		gameStage.addChild(countLabel);
 		
 		//3秒カウントダウン
 		setTimeout(function () {
@@ -129,6 +137,10 @@ var GameLayer = cc.LayerColor.extend({
 	update: function () {
 		var self = this;
 		
+		if (!self.isUpdate) {
+			return;
+		}
+		
 		if (self.countDown > 0) {
 			return;
 		}
@@ -142,7 +154,7 @@ var GameLayer = cc.LayerColor.extend({
 					dungeonType: self.dungeonData.type,
 					target: self.princess
 				}));
-				self.addChild(ene);
+				manager.gameStage.addChild(ene);
 				self.enemys[index] = ene;
 				return;
 			}
@@ -158,6 +170,16 @@ var GameLayer = cc.LayerColor.extend({
 			return;
 		});
 		
+	},
+	
+	
+	/**
+	 * updateを止める
+	 */
+	stopUpdate: function () {
+		var self = this;
+		self.isUpdate = false;
+		return;
 	},
 
 
@@ -202,9 +224,10 @@ var GameLayer = cc.LayerColor.extend({
 			   var hero = new BaseHero(_.extend(manager.charaDataList[currHero], {
 				   x: pos.x,
 				   y: pos.y,
-				   targets: self.enemys
+				   targets: self.enemys,
+				   princess: self.princess
 			   }));
-			   self.addChild(hero);
+			   manager.gameStage.addChild(hero);
 			   self.heros.push(hero);
 			   return true;
 		   }
@@ -226,6 +249,6 @@ var GameScene = cc.Scene.extend({
 
 		var layer = new GameLayer(config);
 		this.addChild(layer);
-		manager.gameStage = layer;
+		
 	}
 });
