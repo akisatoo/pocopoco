@@ -99,11 +99,18 @@ var Princess = null;
 					if (self.sceneType === 'title') {
 						return;
 					}
-					return;
-					//メインページ
-					cc.director.runScene(cc.TransitionFade(1.2, new OverScene({
+					//return;
+					
+					//ゲームシーンのupdateを止める
+					manager.gameStage.stopUpdate();
+					
+					// TODO: ボス戦、次ステージ、クリア、オーバー画面で処理を切り分け
+					//ゲームシーン
+					cc.director.runScene(cc.TransitionSlideInB(1.2, new GameScene({
 						level: 1
 					})));
+					
+					
 					return;
 				}
 			});
