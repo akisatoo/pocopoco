@@ -7,17 +7,18 @@ App.pattern.move = App.pattern.move || [];
 	/**
 	 * 移動パターン
 	 * 
-	 * 直進型
-	 * id: 0
+	 * 敵を追尾する（加速つき）
+	 * id: 1
 	 */
-	App.pattern.move[0] = function (config) {
+	App.pattern.move[1] = function (config) {
 		config = config || {};
 		return;
 	};
 
-	App.pattern.move[0].prototype = {
+	App.pattern.move[1].prototype = {
 
-			straight: 'Straight',
+			id: 1,
+			type:  'homing_acceleration',
 
 			/**
 			 ** 移動法
@@ -31,9 +32,6 @@ App.pattern.move = App.pattern.move || [];
 				var disX = target.x - self.chara.x;
 				var disY = target.y - self.chara.y;
 				
-				//=======================================================
-				//		敵を追尾する（加速つき）
-				//=======================================================
 				var aRotSpeed = 0.1;	// 弾の回転加速度
 				var RotSpeedMax = 100;	// 弾の最高回転速度
 
@@ -101,12 +99,7 @@ App.pattern.move = App.pattern.move || [];
 				} else if (disX < 0) {
 					//ターゲットが左
 					self.chara.x -= dx;
-				}
-				
-				
-				
-				
-				
+				}		
 
 				//アニメーションの変更
 				self._changeAnimPattern({}, {target: target});
