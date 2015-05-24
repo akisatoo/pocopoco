@@ -18,11 +18,8 @@ App.pattern.move = App.pattern.move || [];
 	App.pattern.move[0].prototype = {
 		
 		id: 0,
-		type: 'Homing',
-		
-		/**
-		 * 移動法
-		 */
+		type: 'homing',
+
 		_updateMove: function (config) {
 			config = config || {};
 			var self = this;
