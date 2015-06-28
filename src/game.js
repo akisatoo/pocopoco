@@ -2,6 +2,7 @@ var App = App || {};
 var lib = lib || new Lib();
 var manager = manager || new Manager();
 var ui = ui || new UI();
+var Scene = Scene || {};
 
 var GameLayer = cc.LayerColor.extend({
 	sprite: null,
@@ -257,3 +258,5 @@ var GameScene = cc.Scene.extend({
 		
 	}
 });
+
+Scene['GameScene'] = GameScene;

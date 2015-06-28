@@ -1,5 +1,7 @@
 var lib = lib || new Lib();
 var manager = manager || new Manager();
+var ui = ui || new UI();
+var Scene = Scene || {};
 
 var DungeonSelectLayer = cc.LayerColor.extend({
 	sprite: null,
@@ -20,17 +22,21 @@ var DungeonSelectLayer = cc.LayerColor.extend({
 		var header = ui.createHeader({
 			x: 0,
 			y: size.height,
-			title: 'Character Select',
-			backScene: TitleScene
+			title: 'ダンジョン',
 		});
 		self.addChild(header);
 		
-		var tableView = cc.TableView(self, cc.size(size.width, size.height - self.headerHeight - self.margin.height));
+		var tableView = cc.TableView(self, cc.size(size.width, size.height - self.headerHeight - self.margin.height - 80));
 		tableView.setColor(cc.color(255, 0, 0));
 		tableView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
-		tableView.setPosition(0, -60);
+		tableView.setPosition(0, 80);
 		tableView.setDelegate(self);
 		self.addChild(tableView);
+		
+		var footer = ui.createFooterMenu({
+			currScene: 'dungeon'
+		});
+		self.addChild(footer);
 		
 		return true;
 	},
@@ -38,7 +44,7 @@ var DungeonSelectLayer = cc.LayerColor.extend({
 	/**
 	 * ヘッダーの高さ
 	 */
-	headerHeight: 60,
+	headerHeight: 120,
 	
 	/**
 	 * cellの高さ
@@ -53,29 +59,6 @@ var DungeonSelectLayer = cc.LayerColor.extend({
 		height: 5
 	},
 	
-	/**
-	 * テーブルヘッダー
-	 */
-	createTableHeader: function (config) {
-		config = config || {};
-		var self = this;
-		var title = config.title || 'タイトル';
-		var height = config.height || self.headerHeight;
-		var color = config.color || cc.color(255, 255, 255)
-		
-		var layer = cc.LayerColor();
-		layer.setPosition(0, cc.winSize.height - height);
-		layer.setContentSize(cc.winSize.width, height);
-		layer.setColor(color);
-		
-		var text = cc.LabelTTF(title, "Helvetica", 30);
-		text.setColor(cc.color(0, 0, 0));
-		text.setPosition(cc.winSize.width / 2, height / 2);
-		text.setAnchorPoint(0.5, 0.5);
-		layer.addChild(text);
-		
-		return layer;
-	},
 	
 	tableCellSizeForIndex:function(table, idx){
 		return this.cellSizeForTable(table);
@@ -158,3 +141,5 @@ var DungeonSelectScene = cc.Scene.extend({
 		this.addChild(layer);
 	}
 });
+
+Scene['DungeonSelectScene'] = DungeonSelectScene;

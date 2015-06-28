@@ -1,6 +1,7 @@
 var lib = lib || new Lib();
 var manager = manager || new Manager();
 var ui = ui || new UI();
+var Scene = Scene || {};
 
 var CharacterSelectLayer = cc.LayerColor.extend({
 	sprite: null,
@@ -246,3 +247,5 @@ var CharacterSelectScene = cc.Scene.extend({
 
 	}
 });
+
+Scene['CharacterSelectScene'] = CharacterSelectScene;
