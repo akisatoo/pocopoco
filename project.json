@@ -32,6 +32,7 @@
         "src/dungeonSelect.js",
         "src/characterSelect.js",
         "src/pattern/move/move0.js",
+        "src/settingMenu.js",
         "src/pattern/attack/attack0.js"
     ]
 }
