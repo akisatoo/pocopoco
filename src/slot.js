@@ -14,12 +14,22 @@ var Slot = null;
 		/**
 		 * スロット数
 		 */
-		_maxSlot: 3,
+		_maxSlot: 4,
 		
 		/**
 		 * スロット管理
 		 */
 		_slots: [],
+		
+		selectSlot: null,
+		
+		_baseAngle: 0,
+		_currIndex: 0,
+		
+		_touchThreshold: 100,
+		_touchStartPoint: null,
+		_touchLastPoint: null,
+		_direction: null,
 
 		/**
 		 * コンストラクタ
@@ -33,48 +43,65 @@ var Slot = null;
 			
 			//初期化
 			self._slots = [];
+			self._currIndex = 0;
 			
 			var slotMargin = 20,
 				slotWidth = 100,
-				slotHeight = 100;
+				slotHeight = 200;
 			
+			self.baseLayer = cc.Layer();
 			//スロットのブロック
 			self.slotBlock = cc.Layer();
-			//self.slotBlock.setColor(cc.color(255, 255, 255));
 			
 			//slotBlockの高さを決める為に先に定義
 			var slotText = cc.LabelTTF('Hero Slots', "Arial-BoldMT", 28);
+			//slotTextの設定
+			//slotText.setAnchorPoint(0.5, 1);
+			//slotText.x = self.slotBlock.width / 2;
+			//slotText.y = slotHeight + slotText.height;
+			//self.slotBlock.addChild(slotText);
+
 			
 			//slotBlockのサイズ設定
-			self.slotBlock.width = (slotWidth * self._maxSlot) + (self._maxSlot - 1) * slotMargin;
+			self.slotBlock.width = size.width;
 			self.slotBlock.height = slotHeight + slotText.height;
 			//slotBlockのアンカーポイントを編集可能に※Layerはアンカーポイントが(1, 1)に固定されているため
 			self.slotBlock.ignoreAnchorPointForPosition(false);
 			
-			//slotTextの設定
-			slotText.setAnchorPoint(0.5, 1);
-			slotText.x = self.slotBlock.width / 2;
-			slotText.y = slotHeight + slotText.height;
-			self.slotBlock.addChild(slotText);
+			self.slotBlock.setAnchorPoint(0.5, 0);
+			self.slotBlock.x = size.width / 2;
 			
-			//スロットの設置
+			var r = 150;
+			var angle = 360 / self._maxSlot;
+			self._baseAngle = angle;
+			var count = 0;
+			//_.each(manager.charaDataList, function (charaData, key) {
 			for (var i = 0; i < self._maxSlot; i++) {
-				var margin = i === 0 ? 0 : slotMargin;
-				//スロット
-				var slot = new Slotcharacter({
-					data: slotData[i],
+				var ang = angle * count;
+				var chara = new Slotcharacter({
+					x: (size.width / 2) + (r * Math.sin(ang * Math.PI / 180)),
+					y: r * Math.cos(ang * Math.PI / 180),
+					data: slotData[i] ? slotData[i] : {type: 'empty'},
 					select: i === 0 ? true : false
 				});
-				slot.x = (i * slotWidth) + (slotMargin * i);
-				slot.y = slotHeight;
-				self.slotBlock.addChild(slot, 0);
-				self._slots.push(slot);
+				chara.rotation = ang;
+				self._slots.push(chara);
+				self.slotBlock.addChild(chara);
+				
+				if (i === 0) {
+					//最初のスロットを初期選択に
+					self.selectSlot = chara;
+				}
+
+				count++;
 			}
 			
-			//タッチイベントを設定
-			self._addTouchEvent();
-			
-			return self.slotBlock;
+			self.baseLayer.addChild(self.slotBlock);
+			//タッチイベント登録
+			self._addSwipeEvent(self.baseLayer);
+
+			self.baseLayer._instance = self;
+			return self.baseLayer;
 		},
 
 
@@ -84,64 +111,162 @@ var Slot = null;
 		update: function () {
 			return;
 		},
+		
+		/**
+		 * スロットの中身変更
+		 * キャラ選択時
+		 * 
+		 * @param config
+		 */
+		slotUpdate: function (data) {
+			data = data || {};
+			var self = this;
+			
+			//受け取ったデータをもとにスロットの中身を更新
+			self.selectSlot._instance.slotUpdate(data);
+			
+			return;
+		},
 
 
 		/**
-		 * タッチイベント
+		 * スワイプイベント
 		 */
-		_addTouchEvent: function () {
+		_addSwipeEvent: function (layer) {
 			var self = this;
+			var size = cc.winSize;
 
 			var listner = cc.EventListener.create({
-				data: {},
 				event: cc.EventListener.TOUCH_ONE_BY_ONE,
 				swallowTouches: true,
 				onTouchBegan: function(touch, event) {
-					//タッチ座標（ワールド座標）
-					var pos = touch.getLocation();
-					//ローカル座標に変換
-					var localPos = self.slotBlock.convertToNodeSpace(pos);
+					//var touch = touches[0];
+					var size = cc.winSize;
+					var loc = touch.getLocation();
 					
-					//スロットをタッチしたか
-					var isTouch = false;
-					//選択中のインデックス
-					var selectIndex = null;
+					var target = event.getCurrentTarget();
+					var targetSize = target.getContentSize();
+					var rect = cc.rect(0, 0, size.width, self.slotBlock.height);
+					var posInScreen = target.convertToNodeSpace(touch.getLocation());
 					
-					//タッチ座標と各スロットのあたり判定
-					_.each(self._slots, function (slot, index) {
-						
-						//各スロットの矩形(アンカーポイントの修正で高さがずれているので調整)
-						var rect = cc.rect(slot.x, slot.y - slot.height, slot.width, slot.height);
-						if (cc.rectContainsPoint(rect, localPos)) {
-							manager.currentChara = slot._instance._slotData.name;
-							selectIndex = index;
-							isTouch = true;
+					if (!cc.rectContainsPoint(rect, posInScreen)) {
+						return false;
+					}
+
+					self._touchStartPoint = {
+						x: loc.x,
+						y: loc.y
+					};
+					self._touchLastPoint = {
+						x: loc.x,
+						y: loc.y
+					};
+					return true;
+				},
+
+				onTouchMoved: function(touch, event) {
+					
+					//var touch = touches[0];
+					var loc = touch.getLocation(),
+					start = self._touchStartPoint;
+					
+					if (!start) {
+						return true;
+					}
+
+					// check for left
+					if( loc.x < start.x - self._touchThreshold ) {
+						// if direction changed while swiping left, set new base point
+						if( loc.x > self._touchLastPoint.x ) {
+							start = self._touchStartPoint = {
+								x: loc.x,
+								y: loc.y
+							};
+							self._direction = null;
+						} else {
+							self._direction = 'left';                        
 						}
-						
+					}
+
+					// check for right
+					if( loc.x > start.x + self._touchThreshold ) {
+						// if direction changed while swiping right, set new base point
+						if( loc.x < self._touchLastPoint.x ) {
+							self._touchStartPoint = {
+								x: loc.x,
+								y: loc.y
+							};
+							self._direction = null;
+						} else {
+							self._direction = 'right';                       
+						}
+					}
+
+					self._touchLastPoint = {
+						x: loc.x,
+						y: loc.y
+					};
+					return true;
+				},
+
+				onTouchEnded: function(touch, event){
+					
+					//var touch = touches[0],
+					loc = touch.getLocation()
+
+					if (!self._direction) {
+						self._touchStartPoint = null;
+						self._direction = null;
+						return true;
+					}
+					
+					switch (self._direction) {
+						case 'left':
+							if (self._currIndex >= self._maxSlot - 1) {
+								self._currIndex = 0;
+							} else {
+								self._currIndex++;
+							}
+							self.slotBlock.runAction(cc.RotateBy(0.3, -self._baseAngle));
+							break;
+						case 'right':
+							if (self._currIndex <= 0) {
+								self._currIndex = self._maxSlot - 1;
+							} else {
+								self._currIndex--;
+							}
+							
+							self.slotBlock.runAction(cc.RotateBy(0.3, self._baseAngle));
+							break;
+					}
+					
+					_.each(self._slots, function (slot, index) {
+						var select = false;
+						if (self._currIndex === index) {
+							select = true;
+							var curr = slot._instance._slotData.name;
+							if (slot._instance._slotData.type === 'empty') {
+								curr = null;
+							}
+							manager.currentChara = curr;
+							self.selectSlot = slot;
+						}
+						//スロットの選択状態更新
+						slot._instance._changeState({
+							select: select
+						});
 						return;
 					});
 					
-					//スロットをタッチしていればtrueをreturn（falseだとヒーロー生成の処理が実行されるため）
-					if (isTouch === true) {
-						_.each(self._slots, function (slot, index) {
-							var select = false;
-							if (selectIndex === index) {
-								select = true;
-							}
-							
-							//スロットの選択状態を更新
-							slot._instance._changeState({
-								select: select
-							});
-							return;
-						});
-						return true;
-					}
-					//その他のタッチイベントが発火
-					return false;
+
+					self._touchStartPoint = null;
+					self._direction = null;
+
+					return true;
 				}
 			});
-			cc.eventManager.addListener(listner, self.slotBlock);
+			cc.eventManager.addListener(listner, self.baseLayer);
+			return;
 		},
 
 

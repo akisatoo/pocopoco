@@ -135,7 +135,29 @@ var Manager = null;
 				},
 				//movePattern: 0,
 				attackPattern: 0
-			}
+			},
+			'hero2': {
+				id: 2,
+				name: 'hero2',
+				image: res.HeroRight1,
+				animPattern: {
+					normal: [res.HeroRight1, res.HeroRight2],
+					right: [res.HeroRight1, res.HeroRight2],
+					left: [res.HeroLeft1, res.HeroLeft2]
+				},
+				movePattern: 0
+			},
+			'hero3': {
+				id: 2,
+				name: 'hero3',
+				image: res.HeroRight1,
+				animPattern: {
+					normal: [res.HeroRight1, res.HeroRight2],
+					right: [res.HeroRight1, res.HeroRight2],
+					left: [res.HeroLeft1, res.HeroLeft2]
+				},
+				movePattern: 0
+			},
 		},
 		
 		

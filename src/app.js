@@ -1,5 +1,6 @@
 var App = App || {};
 var manager = manager || new Manager();
+var ui = ui || new UI();
 
 var TitleLayer = cc.LayerColor.extend({
 	sprite: null,

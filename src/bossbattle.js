@@ -1,9 +1,8 @@
 var App = App || {};
 var lib = lib || new Lib();
 var manager = manager || new Manager();
-var ui = ui || new UI();
 
-var GameLayer = cc.LayerColor.extend({
+var BossBattleLayer = cc.LayerColor.extend({
 	sprite: null,
 	ctor: function (config) {
 		config = config || {};
@@ -11,10 +10,10 @@ var GameLayer = cc.LayerColor.extend({
 		this._super();
 		var self = this;
 		var size = cc.winSize;
-		
-		self.dungeonData = config.dungeonData || {};
-		
-		
+
+		self.dungeonData = config.data || {};
+
+
 		//初期化
 		self.princess = null;
 		self.heros = [];
@@ -28,37 +27,37 @@ var GameLayer = cc.LayerColor.extend({
 		background.x = size.width / 2;
 		background.y = size.height / 2;
 		self.addChild(background, 0);
-		
+
 		var gameStage = this;
 		//gameStage.setCascadeOpacityEnabled(true);
 		manager.gameStage = this;
-		
-		
+
+
 		//TODO:メニューから選択したものが入る
 		var slotData = [
-		    manager.charaDataList['hero'],
-		    manager.charaDataList['princess'],
-		    manager.charaDataList['magician']
-		];
-		
+            manager.charaDataList['hero'],
+            manager.charaDataList['princess'],
+            manager.charaDataList['magician']
+        ];
+
 		//選択中のキャラを設定
 		manager.currentChara = slotData[0].name;
-		
+
 		//スロット
 		var slotBlock = new Slot({
 			slotData: slotData
 		});
-		slotBlock.x = 0;
-		slotBlock.y = 0;//slotBlock.height / 2;
+		slotBlock.x = size.width / 2;
+		slotBlock.y = slotBlock.height / 2 + 10;
 		gameStage.addChild(slotBlock, 9999);
-		
+
 		//姫様
 		self.princess = new Princess({
 			dungeonType: self.dungeonData.type,
 			image: res.PrincessRight1
 		});
 		gameStage.addChild(self.princess);
-		
+
 		//敵の生成
 		var enemyMax = 10;
 		for (var i = 0; i < enemyMax; i++) {
@@ -69,19 +68,19 @@ var GameLayer = cc.LayerColor.extend({
 			gameStage.addChild(enemy);
 			self.enemys.push(enemy);
 		}
-		
+
 		//ゲームスタートまでのカウントダウン
 		self.countDown = 3;
 		//アップデートの処理を制限しない
 		self.isUpdate = true;
-		
+
 		//カウントダウンラベル
 		var countLabel = cc.LabelTTF(self.countDown, "Helvetica", 80);
 		countLabel.setColor(cc.color(0, 0, 0));
 		countLabel.setPosition(size.width / 2, size.height / 2);
 		countLabel.setAnchorPoint(0.5, 0.5);
 		gameStage.addChild(countLabel);
-		
+
 		//3秒カウントダウン
 		setTimeout(function () {
 			self.startCountDown(countLabel);
@@ -89,18 +88,18 @@ var GameLayer = cc.LayerColor.extend({
 
 		//タッチイベント登録
 		self._addTouchEvent();
-		
+
 		//update開始
 		self.scheduleUpdate();
 
 		return true;
 	},
-	
+
 	dungeonData: null,	//ダンジョン情報
 	heros: [],	//ヒーローの管理配列
 	enemys: [],	//敵の管理配列
 	countDown: 0,	//開始までのカウントダウン
-	
+
 	/**
 	 * カウントダウン開始
 	 */
@@ -131,23 +130,23 @@ var GameLayer = cc.LayerColor.extend({
 		}, 1000);
 		return;
 	},
-	
+
 	/**
 	 * アップデート
 	 */
 	update: function () {
 		var self = this;
-		
+
 		if (!self.isUpdate) {
 			return;
 		}
-		
+
 		if (self.countDown > 0) {
 			return;
 		}
-		
+
 		self.princess._instance.update();	//姫のupdate
-		
+
 		_.each(self.enemys, function (enemy, index) {
 			if (!enemy) {
 				var size = cc.winSize;
@@ -162,7 +161,7 @@ var GameLayer = cc.LayerColor.extend({
 			enemy._instance.update();	//敵のupdate
 			return;
 		});
-		
+
 		_.each(self.heros, function (hero) {
 			if (!hero) {
 				return;
@@ -170,10 +169,10 @@ var GameLayer = cc.LayerColor.extend({
 			hero._instance.update();	//ヒーローのupdate
 			return;
 		});
-		
+
 	},
-	
-	
+
+
 	/**
 	 * updateを止める
 	 */
@@ -184,76 +183,72 @@ var GameLayer = cc.LayerColor.extend({
 	},
 
 
-   /**
-    * キャラクタ移動用タッチイベント
-    */
-   _touchCount: 0,
-   _addTouchEvent: function (config) {
-	   config = config || {};
-	   var self = this;
-	   var size = cc.winSize;
-	   
-	   var listner = cc.EventListener.create({
-		   data: {},
-		   event: cc.EventListener.TOUCH_ONE_BY_ONE,
-		   swallowTouches: false,
-		   onTouchBegan: function (touch, e) {
-			   var pos = touch.getLocation();
-			   var rect = cc.rect(pos.x, pos.y, 40, 40);
-			   
-			   var isAdd = true;
-			   _.each(self.enemys, function (ene) {
-				   
-				   if (!ene) {
-					   return;
-				   }
-				   
-				   //敵上に生成しようとしているか
-				   if (cc.rectIntersectsRect(rect, ene)) {
-					   isAdd = false;
-				   }
-				   return;
-			   });
-			   
-			   //敵上だったらヒーローを生成しない
-			   if (!isAdd) {
-				   return true;
-			   }
-			   
-			   //ヒーロー生成
-			   var currHero = manager.currentChara;
-			   if (!currHero) {
-				   //選択中のスロットが空か
-				   return true;
-			   }
-			   var hero = new BaseHero(_.extend(manager.charaDataList[currHero], {
-				   x: pos.x,
-				   y: pos.y,
-				   targets: self.enemys,
-				   princess: self.princess
-			   }));
-			   manager.gameStage.addChild(hero);
-			   self.heros.push(hero);
-			   return true;
-		   }
-	   });
-	   cc.eventManager.addListener(listner, this);
-	   return;
-   }
+	/**
+	 * キャラクタ移動用タッチイベント
+	 */
+	_touchCount: 0,
+	_addTouchEvent: function (config) {
+		config = config || {};
+		var self = this;
+		var size = cc.winSize;
+
+		var listner = cc.EventListener.create({
+			data: {},
+			event: cc.EventListener.TOUCH_ONE_BY_ONE,
+			swallowTouches: true,
+			onTouchBegan: function (touch, e) {
+				var pos = touch.getLocation();
+				var rect = cc.rect(pos.x, pos.y, 40, 40);
+
+				var isAdd = true;
+				_.each(self.enemys, function (ene) {
+
+					if (!ene) {
+						return;
+					}
+
+					//敵上に生成しようとしているか
+					if (cc.rectIntersectsRect(rect, ene)) {
+						isAdd = false;
+					}
+					return;
+				});
+
+				//敵上だったらヒーローを生成しない
+				if (!isAdd) {
+					return true;
+				}
+
+				//ヒーロー生成
+				var currHero = manager.currentChara;
+				var hero = new BaseHero(_.extend(manager.charaDataList[currHero], {
+					x: pos.x,
+					y: pos.y,
+					targets: self.enemys,
+					princess: self.princess
+				}));
+				manager.gameStage.addChild(hero);
+				self.heros.push(hero);
+				return true;
+			}
+		});
+		cc.eventManager.addListener(listner, this);
+		return;
+	}
 
 });
 
 
-var GameScene = cc.Scene.extend({
+var BossBattleScene = cc.Scene.extend({
 	onEnter:function () {
 		this._super();
 	},
-	
+
 	ctor: function (config) {
 		this._super();
 
-		var layer = new GameLayer(config);
+		var layer = new BossBattleLayer(config);
 		this.addChild(layer);
-		
+
 	}
 });

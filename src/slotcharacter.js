@@ -48,10 +48,16 @@ var Slotcharacter = null;
 			self.slot = new cc.Sprite(slotImg);
 			self.slot.x = config.x || 0;
 			self.slot.y = config.y || 0;
-			self.slot.setAnchorPoint(0, 1);
+			self.slot.setAnchorPoint(0.5, 0.5);
 
+			if (data.type === 'empty') {
+				//インスタンスにthisを設定
+				self.slot._instance = self;
+				return self.slot;
+			}
+			
 			//キャラ生成
-			self.chara = new cc.Sprite(data.image);
+			self.chara = new cc.Sprite(data.image || res.SlotframeNormal);
 			self.chara.x = self.slot.width / 2;
 			self.chara.y = self.slot.height / 2;
 			self.slot.addChild(self.chara);
@@ -96,6 +102,40 @@ var Slotcharacter = null;
 			
 			return;
 		},
+		
+		
+		/**
+		 * スロットの中身更新
+		 * 
+		 * @param data
+		 */
+		slotUpdate: function (data) {
+			data = data || {};
+			var self = this;
+			
+			self._slotData = data;	//スロットデータを更新
+			
+			if (self.chara) {
+				self.slot.removeChild(self.chara, true);
+				self.chara = null;
+				self._animAction = null;
+			}
+			
+			self.chara = new cc.Sprite(data.image);
+			self.chara.x = self.slot.width / 2;
+			self.chara.y = self.slot.height / 2;
+			self.slot.addChild(self.chara);
+
+			//アニメーションパターンの設定
+			self._animPattern = data.animPattern || {};
+
+			//アニメーション開始
+			self._animStart({
+				type: 'normal'
+			});
+			
+			return;
+		}
 
 	});
 })();

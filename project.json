@@ -14,6 +14,7 @@
         "core/underscore.js",
         "src/resource.js",
         "src/common/manager.js",
+        "src/common/ui.js",
         "core/basecharacter.js",
         "src/common/attackcharacter.js",
         "src/common/herocharacter.js",
@@ -28,7 +29,8 @@
         "src/game.js",
         "src/next.js",
         "src/over.js",
-        "src/DungeonSelect.js",
+        "src/dungeonSelect.js",
+        "src/characterSelect.js",
         "src/pattern/move/move0.js",
         "src/pattern/attack/attack0.js"
     ]

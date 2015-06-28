@@ -17,16 +17,18 @@ var DungeonSelectLayer = cc.LayerColor.extend({
 		bg.y = size.height / 2;
 		self.addChild(bg, 0);
 				
-		var header = self.createTableHeader({
-			title: '〜DungeonSelect〜',
-			height: self.headerHeight
+		var header = ui.createHeader({
+			x: 0,
+			y: size.height,
+			title: 'Character Select',
+			backScene: TitleScene
 		});
 		self.addChild(header);
 		
 		var tableView = cc.TableView(self, cc.size(size.width, size.height - self.headerHeight - self.margin.height));
 		tableView.setColor(cc.color(255, 0, 0));
 		tableView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
-		tableView.setPosition(0, 0);
+		tableView.setPosition(0, -60);
 		tableView.setDelegate(self);
 		self.addChild(tableView);
 		
@@ -138,10 +140,11 @@ var DungeonSelectLayer = cc.LayerColor.extend({
      tableCellTouched: function (table, cell) {
     	 cc.log('DungeonName: ' + cell.data.name);
     	 
-    	 //ゲームシーンに飛ばす
-    	 cc.director.runScene(cc.TransitionFade(1.2, new GameScene({
+    	 //キャラクター選択シーンに飛ばす
+    	 cc.director.runScene(cc.TransitionFade(1.2, new CharacterSelectScene({
     		 level: 1,
-    		 data: cell.data
+    		 pageType: 'dungeon',
+    		 dungeonData: cell.data
     	 })));
     	 return true;
      }
