@@ -22,8 +22,7 @@ var SettingMenuLayer = cc.LayerColor.extend({
 		var header = ui.createHeader({
 			x: 0,
 			y: size.height,
-			title: '設定',
-			backScene: TitleScene
+			title: '設定'
 		});
 		self.addChild(header);
 
@@ -34,6 +33,11 @@ var SettingMenuLayer = cc.LayerColor.extend({
 		tableView.setDelegate(self);
 		self.addChild(tableView);
 
+		var footer = ui.createFooterMenu({
+			currScene: 'setting'
+		});
+		self.addChild(footer);
+		
 		return true;
 	},
 	
@@ -171,4 +175,4 @@ var SettingMenuScene = cc.Scene.extend({
 	}
 });
 
-Scne['SettingMenuScene'] = SettingMenuScene;
+Scene['SettingMenuScene'] = SettingMenuScene;
