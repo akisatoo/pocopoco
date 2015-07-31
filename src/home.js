@@ -3,7 +3,7 @@ var manager = manager || new Manager();
 var ui = ui || new UI();
 var Scene = Scene || {};
 
-var SettingMenuLayer = cc.LayerColor.extend({
+var HomeLayer = cc.LayerColor.extend({
 	sprite: null,
 	ctor: function (config) {
 		config = config || {};
@@ -22,7 +22,7 @@ var SettingMenuLayer = cc.LayerColor.extend({
 		var header = ui.createHeader({
 			x: 0,
 			y: size.height,
-			title: '設定'
+			title: 'ホームだよ'
 		});
 		self.addChild(header);
 
@@ -34,7 +34,7 @@ var SettingMenuLayer = cc.LayerColor.extend({
 		self.addChild(tableView);
 
 		var footer = ui.createFooterMenu({
-			currScene: 'setting'
+			currScene: 'home'
 		});
 		self.addChild(footer);
 
@@ -60,16 +60,21 @@ var SettingMenuLayer = cc.LayerColor.extend({
 	},
 
 	//+++ メニューデータ +++//
-	settingMenuList: [
+	homeMenuList: [
 	                  {
 	                	  id: 1,
-	                	  title: 'サウンド',
-	                	  scene: 'SoundScene'
+	                	  title: 'キャラ',
+	                	  scene: 'CharacterMenuScene'
 	                  },
 	                  {
 	                	  id: 2,
-	                	  title: 'クレジット',
-	                	  scene: 'CreditScene'
+	                	  title: 'ダンジョン',
+	                	  scene: 'DungeonSelectScene'
+	                  },
+	                  {
+	                	  id: 3,
+	                	  title: '設定',
+	                	  scene: 'SettingMenuScene'
 	                  }
 	                  ],
 
@@ -109,7 +114,7 @@ var SettingMenuLayer = cc.LayerColor.extend({
 	                	  var self = this;
 	                	  var cell = cc.TableViewCell.create();
 	                	  cell.setContentSize(cc.winSize.width, self.celHeight);
-	                	  cell.data = self.settingMenuList[idx];
+	                	  cell.data = self.homeMenuList[idx];
 
 	                	  //背景
 	                	  var bg = cc.LayerColor();
@@ -125,7 +130,7 @@ var SettingMenuLayer = cc.LayerColor.extend({
 	                		  self.onTouchedMenu(cell);
 	                	  }
 
-	                	  var itemFont = cc.MenuItemFont(self.settingMenuList[idx].title, func);
+	                	  var itemFont = cc.MenuItemFont(self.homeMenuList[idx].title, func);
 	                	  itemFont.setAnchorPoint(0, 0.5);
 
 	                	  var menu = cc.Menu(itemFont);
@@ -138,14 +143,14 @@ var SettingMenuLayer = cc.LayerColor.extend({
 
 
 	                  numberOfCellsInTableView:function (table) {
-	                	  return this.settingMenuList.length;
+	                	  return this.homeMenuList.length;
 	                  },
 
 	                  tableCellTouched: function (table, cell) {
 	                  },
 
 	                  onTouchedMenu: function(cell) {
-	                	  cc.log('SettingMenu: ' + cell.data.title);
+	                	  cc.log('Home: ' + cell.data.title);
 
 	                	  cc.director.runScene(cc.TransitionFade(1.2, new Scene[cell.data.scene]({
 	                		  level: 1,
@@ -158,16 +163,16 @@ var SettingMenuLayer = cc.LayerColor.extend({
 
 
 
-var SettingMenuScene = cc.Scene.extend({
+var HomeScene = cc.Scene.extend({
 	onEnter:function () {
 		this._super();
 
-		var layer = new SettingMenuLayer();
+		var layer = new HomeLayer();
 		this.addChild(layer);
 	}
 });
 
-Scene['SettingMenuScene'] = SettingMenuScene;
+Scene['HomeScene'] = HomeScene;
 
 
 

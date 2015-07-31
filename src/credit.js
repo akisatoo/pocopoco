@@ -42,4 +42,4 @@ var CreditScene = cc.Scene.extend({
 	}
 });
 
-Scne['CreditScene'] = CreditScene;
+Scene['CreditScene'] = CreditScene;

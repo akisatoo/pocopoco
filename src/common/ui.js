@@ -18,7 +18,7 @@ var UI = null;
 				{
 					type: 'home',
 					title: 'ホーム',
-					//scene: 'HomeScene'
+					scene: 'HomeScene'
 				},
 				{
 					type: 'chara',

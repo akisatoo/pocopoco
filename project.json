@@ -26,7 +26,7 @@
         "src/slot.js",
         "src/princess.js",
         "src/app.js",
-	"src/characterMenu.js",
+		"src/characterMenu.js",
         "src/game.js",
         "src/next.js",
         "src/over.js",
@@ -34,6 +34,9 @@
         "src/characterSelect.js",
         "src/pattern/move/move0.js",
         "src/settingMenu.js",
+        "src/home.js",
+        "src/sound.js",
+        "src/credit.js",
         "src/pattern/attack/attack0.js"
     ]
 }
