@@ -96,6 +96,8 @@ var BaseEnemy = null;
 				*/
 				return;
 			}
+			
+			self._changeAnimPattern({}, {target: self._target});
 
 			//updateで移動
 			self._updateMove({
@@ -116,8 +118,6 @@ var BaseEnemy = null;
 
 			var disX = target.x - self.chara.x;
 			var disY = target.y - self.chara.y;
-
-			self._changeAnimPattern({}, {target: target});
 
 			if (disX > 0) {
 				//ターゲットが右

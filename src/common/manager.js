@@ -207,6 +207,7 @@ var Manager = null;
 					right: [res.EnemyRight1, res.EnemyRight2],
 					left: [res.EnemyLeft1, res.EnemyLeft2]
 				},
+				movePattern: 0
 			}
 		},
 		
