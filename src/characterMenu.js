@@ -136,7 +136,7 @@ tableCellAtIndex:function (table, idx) {
 	
 	var func = function() {
 		self.onTouchedMenu(cell);
-	}
+	};
 	
 	var itemFont = cc.MenuItemFont(self.menuList[idx].title, func);
 	itemFont.setAnchorPoint(0, 0.0);

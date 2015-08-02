@@ -39,11 +39,11 @@ var Manager = null;
 		 */
 		gameMoney: 0,
 		getFunds: function () {
-			return cc.sys.localStorage.getItem('Funds');
+			return cc.sys.localStorage.getItem('funds');
 		},
 		
 		setFunds: function (funds) {
-			cc.sys.localStorage.setItem('Funds', funds);
+			cc.sys.localStorage.setItem('funds', funds);
 			return;
 		},
 		
@@ -51,7 +51,7 @@ var Manager = null;
 		 * 資金パラメーターを削除
 		 */
 		removeFunds: function () {
-			cc.sys.localStorage.removeItem('Funds');
+			cc.sys.localStorage.removeItem('funds');
 			return;
 		},
 		
@@ -74,6 +74,35 @@ var Manager = null;
 			cc.sys.localStorage.removeItem('warfunds');
 			return;
 		},
+		
+		
+		/**
+		 * パーティーリストの取得
+		 * 注意：Stringで保存されているみたい
+		 */
+		getPartyList: function () {
+			//パーティーの設定がなければ初期キャラクタで返す
+			return [
+			    parseInt(cc.sys.localStorage.getItem('party0')) || 2,
+			    parseInt(cc.sys.localStorage.getItem('party1')) || null,
+			    parseInt(cc.sys.localStorage.getItem('party2')) || null,
+			    parseInt(cc.sys.localStorage.getItem('party3')) || null,
+			];
+		},
+
+		
+		/**
+		 * パーティーリストを保持
+		 * 注意；Stringで保存されているみたい
+		 */
+		setPartyList: function (list) {
+			_.each(list, function (id, index) {
+				cc.sys.localStorage.setItem('party' + index, String(id) || null);
+				return;
+			});
+			return;
+		},
+		
 		
 		/**
 		 * ダンジョンデータ
@@ -105,7 +134,7 @@ var Manager = null;
 		 * キャラクターデータ
 		 */
 		charaDataList: {
-			'princess': {
+			1: {
 				id: 1,
 				name: 'princess',
 				image: res.PrincessRight1,
@@ -113,7 +142,7 @@ var Manager = null;
 					normal: [res.PrincessRight1, res.PrincessRight2]
 				}
 			},
-			'hero': {
+			2: {
 				id: 2,
 				name: 'hero',
 				image: res.HeroRight1,
@@ -124,7 +153,7 @@ var Manager = null;
 				},
 				movePattern: 0
 			},
-			'magician': {
+			3: {
 				id: 3,
 				name: 'magician',
 				image: res.MagicianRight1,
@@ -136,8 +165,8 @@ var Manager = null;
 				//movePattern: 0,
 				attackPattern: 0
 			},
-			'hero2': {
-				id: 2,
+			4: {
+				id: 4,
 				name: 'hero2',
 				image: res.HeroRight1,
 				animPattern: {
@@ -147,8 +176,8 @@ var Manager = null;
 				},
 				movePattern: 0
 			},
-			'hero3': {
-				id: 2,
+			5: {
+				id: 5,
 				name: 'hero3',
 				image: res.HeroRight1,
 				animPattern: {

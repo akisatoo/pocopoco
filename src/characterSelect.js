@@ -22,24 +22,21 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		var header = ui.createHeader({
 			x: 0,
 			y: size.height,
-			title: 'Character Select',
-			backScene: DungeonSelectScene
+			title: 'パーティー編集',
+			backScene: CharacterMenuScene
 		});
 		self.addChild(header);
 		
-		var list = self._createCharaList();
-		self.addChild(list);
-		
-		//上部にスロット表示
-		//TODO:メニューから選択したものが入る
-		var slotData = [
-	        manager.charaDataList['hero'],
-	        manager.charaDataList['princess'],
-	        manager.charaDataList['magician']
-        ];
+		//スロットに現在のパーティーデータを格納
+		var slotData = [];
+		self.partyList = manager.getPartyList();
+		_.each(self.partyList, function (partyId) {
+			slotData.push(manager.charaDataList[partyId]);
+			return;
+		});
 
 		//選択中のキャラを設定
-		manager.currentChara = slotData[0].name;
+		manager.currentChara = slotData[0].id;
 
 		//スロット
 		self.slotBlock = new Slot({
@@ -48,6 +45,11 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		self.slotBlock.x = 0;
 		self.slotBlock.y = 0;
 		self.addChild(self.slotBlock);
+		
+		//キャラクタのリストここからパーティーを選択
+		var list = self._createCharaList();
+		self.addChild(list);
+
 		
 		//決定ボタン
 		var decideItem = new cc.MenuItemImage(
@@ -62,7 +64,11 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 						level: 1,
 						dungeonData: config.dungeonData
 					})));
+					return;
 				}
+				
+				//パーティー編集の場合
+				cc.log('party select');
 				
 			}, this);
 		decideItem.attr({
@@ -79,6 +85,17 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 
 		return true;
 	},
+	
+	/**
+	 * パーティーリスト
+	 */
+	partyList: [],
+	
+	
+	/**
+	 * 選択されているキャラクタリストのオブジェクト管理
+	 */
+	selectCharaList: [],
 	
 	
 	/**
@@ -102,10 +119,13 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		base.x = size.width / 2;
 		base.y = 220;
 		
+		
 		var charaList = [
-            manager.charaDataList['hero'],
-            manager.charaDataList['princess'],
-            manager.charaDataList['magician']
+            manager.charaDataList[1],
+            manager.charaDataList[2],
+            manager.charaDataList[3],
+            manager.charaDataList[4],
+            manager.charaDataList[5]
         ];
 		
 		var x = 0;
@@ -113,11 +133,11 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		var margin = 4;
 		var charaWidth = 80;
 		_.each(charaList, function (charaData, index) {
-			var chara = cc.Sprite(charaData.image);
-			chara.setAnchorPoint(0, 1);
-			chara.x = x;
-			chara.y = y;
-			chara.data = charaData;
+			var chara = self._createSelectListChara({
+				x: x,
+				y: y,
+				data: charaData
+			});
 			base.addChild(chara);
 			//タッチイベント登録
 			self._addTouchEvent(chara);
@@ -159,8 +179,26 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 					if (!target.data) {
 						return true;
 					}
+					
+					if (target.isSelect) {
+						return true;
+					}
+					
+					var currIndex = self.slotBlock._instance.currIndex;
+					//選択されたキャラをを選択済み状態に
+					target.setSelectStatus(true);
+					//選択されたキャラと入れ替わるキャラを選択解除
+					if (self.selectCharaList[currIndex]) {
+						self.selectCharaList[currIndex].setSelectStatus(false);
+					}
+					//選択されたキャラ入れ替え
+					self.selectCharaList[currIndex] = target;
+					
 					//リストから選択しているキャラをスロットに入れる
 					self.slotBlock._instance.slotUpdate(target.data);
+					
+					self.partyList[self.slotBlock._instance.currIndex] = target.data.id;
+					manager.setPartyList(self.partyList)
 					return true;
 				}
 
@@ -185,52 +223,55 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 	
 	
 	/**
-	 * 選択するキャラクター
-	 * 
-	 * @param config
-	 * @returns {___anonymous3017_3020}
+	 * キャラクタを選択する一覧
 	 */
-	_charaBox: function (config) {
-		config + config || {};
-		var image = config.image;
-		var angle = config.angle;
-		var r = config.r;
+	_createSelectListChara: function (config) {
 		var self = this;
+		var data = config.data || {};
 		
-		var base = cc.Sprite(image);
-		base.x = r * Math.sin(angle * Math.PI / 180);
-		base.y = r * Math.cos(angle * Math.PI / 180);
-		base.rotation = angle;
-		base.name = config.name;
+		var chara = cc.Sprite(data.image);
+		chara.setAnchorPoint(0, 1);
+		chara.x = config.x;
+		chara.y = config.y;
+		chara.data = data;
+		//タッチイベント登録
+		self._addTouchEvent(chara);
 		
-		return base;
-	},
-	
-	
-	/**
-	 * キャラクタ選択時イベント
-	 */
-	_selectEvent: function (touches, event) {
-		var self = this;
-		var touch = touches[0];
-		var loc = touch.getLocation();
-		var target = event.getCurrentTarget();
-		var posInScreen = target.convertToNodeSpace(touch.getLocation());
-		var Size = target.getContentSize();
-		var rect = cc.rect(0, 0, Size.width, Size.height);
-
-		if(cc.rectContainsPoint(rect, posInScreen)){
-			
-			if (!target.data) {
-				return true;
+		var selectLabel = cc.LabelTTF('SELECT', "Arial-BoldMT", 14);
+		selectLabel.setColor(cc.color(255, 0, 0));
+		selectLabel.setPosition(chara.width / 2, chara.height / 2);
+		selectLabel.setAnchorPoint(0.5, 0.5);
+		selectLabel.visible = false;
+		chara.addChild(selectLabel);
+		
+		chara.setSelectStatus = function (isSelect) {
+			if (!isSelect) {
+				//選択状態解除
+				chara.isSelect = false;
+				selectLabel.visible = false;
+				return;
 			}
-			//リストから選択しているキャラをスロットに入れる
-			self.slotBlock._instance.slotUpdate(target.data);
-			return true;
+			
+			//選択状態に
+			chara.isSelect = true;
+			selectLabel.visible = true;
+			
+			return;
+		};
+		
+		var indexOf = _.indexOf(self.partyList, data.id);
+		if (indexOf !== -1) {
+			//パーティーに含まれていれば選択状態に
+			chara.setSelectStatus(true);
+			self.selectCharaList[indexOf] = chara;
+		} else {
+			//パーティーに含まれていなければ非選択状態に
+			chara.setSelectStatus(false);
 		}
-
-		return false;
+		
+		return chara;
 	},
+	
 
 });
 
