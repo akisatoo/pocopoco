@@ -86,21 +86,28 @@ var DungeonSelectLayer = cc.LayerColor.extend({
     	 cell.setContentSize(cc.winSize.width, self.celHeight);
     	 cell.data = manager.dungeonList[idx];
     	 
+    	 // セルの背景スプライトを生成
+    	 var sprite = cc.Sprite(res.MenuCell);
+    	 sprite.setContentSize(cc.winSize.width - (self.margin.width * 2), self.celHeight - (self.margin.height * 2));
+    	 sprite.setAnchorPoint(0.0, 0.5);
+    	 sprite.setPosition(self.margin.width, self.margin.height);
+    	 cell.addChild(sprite);
+    	 
     	 //背景
-		 var bg = cc.LayerColor();
+		 /*var bg = cc.LayerColor();
 		 bg.setColor(cc.color(255, 255, 255));
 		 bg.setContentSize(cc.winSize.width - (self.margin.width * 2), self.celHeight - (self.margin.height * 2));
 		 bg.setAnchorPoint(0.5, 0.5);
 		 bg.setPosition(self.margin.width, self.margin.height);
-		 cell.addChild(bg);
+		 cell.addChild(bg);*/
 		 
-		 var bgSize = bg.getContentSize();
+    	 var bgSize = sprite.getContentSize();
 		 //ダンジョン名
 		 var label = cc.LabelTTF(manager.dungeonList[idx].name, "Helvetica", 30);
 		 label.setColor(cc.color(0, 0, 0));
 		 label.setPosition(50, bgSize.height / 2);
 		 label.setAnchorPoint(0, 0.5);
-		 bg.addChild(label);
+		 sprite.addChild(label);
 		 
     	 return cell;
      },
