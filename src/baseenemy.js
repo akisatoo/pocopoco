@@ -81,7 +81,7 @@ var BaseEnemy = null;
 
 			//あたり判定
 			if (self.isUpdate && self._hitTest({target: self._target})) {
-
+/*
 				//姫を回転
 				manager.gameStage.isUpdate = false;
 				self.isUpdate = false;
@@ -93,7 +93,7 @@ var BaseEnemy = null;
 						return;
 					}
 				});
-				
+				*/
 				return;
 			}
 

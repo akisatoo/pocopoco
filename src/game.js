@@ -13,6 +13,7 @@ var GameLayer = cc.LayerColor.extend({
 		var self = this;
 		var size = cc.winSize;
 		
+		self.myLevel = config.level || 1;
 		self.dungeonData = config.dungeonData || {};
 		
 		//初期化
@@ -24,7 +25,7 @@ var GameLayer = cc.LayerColor.extend({
 		self.setColor(cc.color(255, 255, 255));
 
 		//背景
-		var background = cc.Sprite(res.Background);
+		var background = cc.Sprite(res.DungeonBackground);
 		background.x = size.width / 2;
 		background.y = size.height / 2;
 		self.addChild(background, 0);
@@ -99,6 +100,7 @@ var GameLayer = cc.LayerColor.extend({
 	slotBlock: null,
 	slotData: [],
 	
+	myLevel: 1,
 	dungeonData: null,	//ダンジョン情報
 	heros: [],	//ヒーローの管理配列
 	enemys: [],	//敵の管理配列

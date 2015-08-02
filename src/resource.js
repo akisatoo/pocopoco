@@ -8,6 +8,7 @@ var res = {
     TitleNormal: "res/over/title_normal.png",
     TitleSelect: "res/over/title_select.png",
     Background: "res/pokodan_home_back03.png",
+    DungeonBackground: "res/background.png",
     Back: "res/common/back.png",
     MenuCell: "res/common/menu_list_image.png",
     DecideNormal: "res/charaselect/decide_normal.png",
