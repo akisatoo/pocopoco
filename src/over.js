@@ -10,7 +10,7 @@ var OverLayer = cc.LayerColor.extend({
 
 		self.setColor(cc.color(255, 255, 255));
 		
-		var overImage = cc.Sprite.create(res.GameoverImage);
+		var overImage = cc.Sprite(res.GameoverImage);
 		overImage.x = size.width / 2;
 		overImage.y = size.height / 2;
 		self.addChild(overImage);
@@ -21,7 +21,7 @@ var OverLayer = cc.LayerColor.extend({
 			function () {
 	
 				//タイトル
-				cc.director.runScene(cc.TransitionFade(1.2, new TitleScene()));
+				cc.director.runScene(cc.TransitionFade(1.2, new HomeScene()));
 	
 			}, this);
 		closeItem.attr({

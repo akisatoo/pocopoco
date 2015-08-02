@@ -10,7 +10,7 @@ var Princess = null;
 		return this.__construct(config);
 	};
 
-	Princess.prototype = lib.extend(BaseCharacter.prototype, {
+	Princess.prototype = lib.extend(Character.prototype, {
 		
 		/**
 		 * アニメーションパターン作成
@@ -67,7 +67,11 @@ var Princess = null;
 			self.chara.y = config.y || startPos.y;
 
 			//アニメーション開始
+			self._animPattern = {
+				normal: [res.PrincessRight1, res.PrincessRight2]
+			};
 			self._animStart({
+				test: 'princess',
 				type: animType
 			});
 			
@@ -114,6 +118,23 @@ var Princess = null;
 					return;
 				}
 			});
+		},
+		
+		
+		/**
+		 * 移動ストップ
+		 */
+		moveStop: function (config) {
+			config = config || {};
+			var self = this;
+			
+			//移動アニメーションがあれば停止、初期化
+			if (self._moveAnim) {
+				self.chara.stopAction(self._moveAnim);
+				self._moveAnim = null;
+			}
+			
+			return;
 		}
 		
 

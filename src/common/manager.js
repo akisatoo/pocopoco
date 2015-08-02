@@ -109,24 +109,28 @@ var Manager = null;
 		 */
 		dungeonList: [
 			{
-				'id': 1,
-				'name': 'ダンジョン1',
-				'type' : 'vertical'
+				id: 1,
+				name: 'ダンジョン1',
+				type: 'vertical',
+				count: 3
 			},
 			{
-				'id': 2,
-				'name': 'ダンジョン2',
-				'type' : 'vertical'
+				id: 2,
+				name: 'ダンジョン2',
+				type: 'vertical',
+				count: 3
 			},
 			{
-				'id': 3,
-				'name': 'ダンジョン3',
-				'type' : 'vertical'
+				id: 3,
+				name: 'ダンジョン3',
+				type: 'vertical',
+				count: 3
 			},
 			{
-				'id': 4,
-				'name': 'ダンジョン4',
-				'type' : 'vertical'
+				id: 4,
+				name: 'ダンジョン4',
+				type: 'vertical',
+				count: 3
 			},
 		],
 		

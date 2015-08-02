@@ -80,9 +80,21 @@ var BaseEnemy = null;
 			var self = this;
 
 			//あたり判定
-			if (self._hitTest({target: self._target})) {
-				//TODO:ゲームオーバーに飛ばす
-				//console.log('GAME OVER...');
+			if (self.isUpdate && self._hitTest({target: self._target})) {
+
+				//姫を回転
+				manager.gameStage.isUpdate = false;
+				self.isUpdate = false;
+				self._target._instance.moveStop();
+				self._target._instance._hitRotation({
+					complete: function () {
+						//ゲームオーバーに飛ばす
+						cc.director.runScene(cc.TransitionTurnOffTiles(1.2, new OverScene()));
+						return;
+					}
+				});
+				
+				return;
 			}
 
 			//updateで移動
