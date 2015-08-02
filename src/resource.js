@@ -36,7 +36,10 @@ var res = {
     EnemyRight2: "res/enemy/Kaijin_4.png",
     EnemyLeft1: "res/enemy/Kaijin_1.png",
     EnemyLeft2: "res/enemy/Kaijin_2.png",
-    EnemyDamage: "res/enemy/Kaijin_5.png"
+    EnemyDamage: "res/enemy/Kaijin_5.png",
+    CharaMenu: "res/home/charaMenu.png",
+    DungonMenu: "res/home/dungonMenu.png",
+    SettingMenu: "res/home/settingMenu.png",
 };
 
 var g_resources = [];
