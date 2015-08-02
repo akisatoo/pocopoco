@@ -19,12 +19,12 @@ var Slot = null;
 		/**
 		 * スロット管理
 		 */
-		_slots: [],
+		slotList: [],
 		
 		selectSlot: null,
 		
 		_baseAngle: 0,
-		_currIndex: 0,
+		currIndex: 0,
 		
 		_touchThreshold: 100,
 		_touchStartPoint: null,
@@ -42,8 +42,8 @@ var Slot = null;
 			var slotData = config.slotData || [];	//スロットのデータ
 			
 			//初期化
-			self._slots = [];
-			self._currIndex = 0;
+			self.slotList = [];
+			self.currIndex = 0;
 			
 			var slotMargin = 20,
 				slotWidth = 100,
@@ -85,7 +85,7 @@ var Slot = null;
 					select: i === 0 ? true : false
 				});
 				chara.rotation = ang;
-				self._slots.push(chara);
+				self.slotList.push(chara);
 				self.slotBlock.addChild(chara);
 				
 				if (i === 0) {
@@ -222,29 +222,29 @@ var Slot = null;
 					
 					switch (self._direction) {
 						case 'left':
-							if (self._currIndex >= self._maxSlot - 1) {
-								self._currIndex = 0;
+							if (self.currIndex >= self._maxSlot - 1) {
+								self.currIndex = 0;
 							} else {
-								self._currIndex++;
+								self.currIndex++;
 							}
 							self.slotBlock.runAction(cc.RotateBy(0.3, -self._baseAngle));
 							break;
 						case 'right':
-							if (self._currIndex <= 0) {
-								self._currIndex = self._maxSlot - 1;
+							if (self.currIndex <= 0) {
+								self.currIndex = self._maxSlot - 1;
 							} else {
-								self._currIndex--;
+								self.currIndex--;
 							}
 							
 							self.slotBlock.runAction(cc.RotateBy(0.3, self._baseAngle));
 							break;
 					}
 					
-					_.each(self._slots, function (slot, index) {
+					_.each(self.slotList, function (slot, index) {
 						var select = false;
-						if (self._currIndex === index) {
+						if (self.currIndex === index) {
 							select = true;
-							var curr = slot._instance._slotData.name;
+							var curr = slot._instance._slotData.id;
 							if (slot._instance._slotData.type === 'empty') {
 								curr = null;
 							}

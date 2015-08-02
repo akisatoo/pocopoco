@@ -15,7 +15,6 @@ var GameLayer = cc.LayerColor.extend({
 		
 		self.dungeonData = config.dungeonData || {};
 		
-		
 		//初期化
 		self.princess = null;
 		self.heros = [];
@@ -34,24 +33,24 @@ var GameLayer = cc.LayerColor.extend({
 		//gameStage.setCascadeOpacityEnabled(true);
 		manager.gameStage = this;
 		
-		
-		//TODO:メニューから選択したものが入る
-		var slotData = [
-		    manager.charaDataList['hero'],
-		    manager.charaDataList['princess'],
-		    manager.charaDataList['magician']
-		];
+		//スロットデータの取得と整形
+		self.slotData = [];
+		self.partyList = manager.getPartyList();
+		_.each(self.partyList, function (partyId) {
+			self.slotData.push(manager.charaDataList[partyId]);
+			return;
+		});
 		
 		//選択中のキャラを設定
-		manager.currentChara = slotData[0].name;
+		manager.currentChara = self.slotData[0].id;
 		
 		//スロット
-		var slotBlock = new Slot({
-			slotData: slotData
+		self.slotBlock = new Slot({
+			slotData: self.slotData
 		});
-		slotBlock.x = 0;
-		slotBlock.y = 0;//slotBlock.height / 2;
-		gameStage.addChild(slotBlock, 9999);
+		self.slotBlock.x = 0;
+		self.slotBlock.y = 0;//slotBlock.height / 2;
+		gameStage.addChild(self.slotBlock, 9999);
 		
 		//姫様
 		self.princess = new Princess({
@@ -77,7 +76,7 @@ var GameLayer = cc.LayerColor.extend({
 		self.isUpdate = true;
 		
 		//カウントダウンラベル
-		var countLabel = cc.LabelTTF(self.countDown, "Helvetica", 80);
+		var countLabel = cc.LabelTTF(self.countDown, "MisakiGothic", 80);
 		countLabel.setColor(cc.color(0, 0, 0));
 		countLabel.setPosition(size.width / 2, size.height / 2);
 		countLabel.setAnchorPoint(0.5, 0.5);
@@ -96,6 +95,9 @@ var GameLayer = cc.LayerColor.extend({
 
 		return true;
 	},
+	
+	slotBlock: null,
+	slotData: [],
 	
 	dungeonData: null,	//ダンジョン情報
 	heros: [],	//ヒーローの管理配列
@@ -227,7 +229,9 @@ var GameLayer = cc.LayerColor.extend({
 				   //選択中のスロットが空か
 				   return true;
 			   }
-			   var hero = new BaseHero(_.extend(manager.charaDataList[currHero], {
+			   
+			   var currIndex = self.slotBlock._instance.currIndex;
+			   var hero = new BaseHero(_.extend(self.slotData[currIndex], {
 				   x: pos.x,
 				   y: pos.y,
 				   targets: self.enemys,
@@ -235,6 +239,7 @@ var GameLayer = cc.LayerColor.extend({
 			   }));
 			   manager.gameStage.addChild(hero);
 			   self.heros.push(hero);
+			   
 			   return true;
 		   }
 	   });
