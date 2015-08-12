@@ -39,7 +39,8 @@ var Manager = null;
 		 */
 		gameMoney: 0,
 		getFunds: function () {
-			return cc.sys.localStorage.getItem('funds');
+			n = cc.sys.localStorage.getItem('funds');
+			return Number(n);
 		},
 		
 		setFunds: function (funds) {
@@ -141,6 +142,7 @@ var Manager = null;
 			1: {
 				id: 1,
 				name: 'princess',
+				value: 1,
 				image: res.PrincessRight1,
 				animPattern: {
 					normal: [res.PrincessRight1, res.PrincessRight2]
@@ -149,6 +151,7 @@ var Manager = null;
 			2: {
 				id: 2,
 				name: 'hero',
+				value: 1,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],
@@ -160,6 +163,7 @@ var Manager = null;
 			3: {
 				id: 3,
 				name: 'magician',
+				value: 1,
 				image: res.MagicianRight1,
 				animPattern: {
 					normal: [res.MagicianRight1, res.MagicianRight2],
@@ -172,6 +176,7 @@ var Manager = null;
 			4: {
 				id: 4,
 				name: 'hero2',
+				value: 1,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],

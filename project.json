@@ -31,6 +31,7 @@
     "src/over.js",
     "src/dungeonSelect.js",
     "src/characterSelect.js",
+    "src/characterStore.js",
     "src/pattern/move/move0.js",
     "src/settingMenu.js",
     "src/home.js",
