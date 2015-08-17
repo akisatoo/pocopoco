@@ -151,7 +151,7 @@ var Manager = null;
 			2: {
 				id: 2,
 				name: 'hero',
-				value: 1,
+				value: 2,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],
@@ -163,7 +163,7 @@ var Manager = null;
 			3: {
 				id: 3,
 				name: 'magician',
-				value: 1,
+				value: 3,
 				image: res.MagicianRight1,
 				animPattern: {
 					normal: [res.MagicianRight1, res.MagicianRight2],
@@ -176,7 +176,7 @@ var Manager = null;
 			4: {
 				id: 4,
 				name: 'hero2',
-				value: 1,
+				value: 4,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],
@@ -188,6 +188,7 @@ var Manager = null;
 			5: {
 				id: 5,
 				name: 'hero3',
+				value: 5,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],

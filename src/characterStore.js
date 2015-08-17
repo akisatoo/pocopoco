@@ -4,13 +4,25 @@ var ui = ui || new UI();
 var Scene = Scene || {};
 
 var CharacterStoreLayer = cc.LayerColor.extend({
-	sprite: null,
+	sprite: null,					// スプライト初期化
+	currentMoneyLabel: null,		// 所持金のラベルを作成
+	partyList: [],					// パーティーリスト
+	selectCharaList: [],			// 選択されているキャラクタリストのオブジェクト管理
+	
+	charaListActiveSwitch: true,	// リストのキャラクタがタッチできるかどうかのスイッチ
+	
 	ctor: function (config) {
 		config = config || {};
 
 		this._super();
 		var self = this;
 		var size = cc.winSize;
+		
+		////////////
+		// 後で消す!!!!
+		////////////
+		manager.setFunds(50);
+		////////////
 
 		self.setColor(cc.color(100, 100, 100));
 
@@ -26,7 +38,14 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 			backScene: CharacterMenuScene
 		});
 		self.addChild(header);
-
+		
+		// 所持金を表示するラベル
+		self.currentMoneyLabel = cc.LabelTTF('$ ' + manager.getFunds(), "Arial-BoldMT", 32);
+		self.currentMoneyLabel.setColor(cc.color(0, 0, 0));
+		self.currentMoneyLabel.setPosition(size.width - self.currentMoneyLabel._getWidth(), size.height / 1.15);
+		self.currentMoneyLabel.setAnchorPoint(0.5, 0.5);
+		self.addChild(self.currentMoneyLabel, 10);
+		
 		//スロットに現在のパーティーデータを格納
 		var slotData = [];
 		self.partyList = manager.getPartyList();
@@ -49,7 +68,6 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		//キャラクタのリストここからパーティーを選択
 		var list = self._createCharaList();
 		self.addChild(list);
-
 
 		//決定ボタン
 		var decideItem = new cc.MenuItemImage(
@@ -88,17 +106,6 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		return true;
 	},
 
-	/**
-	 * パーティーリスト
-	 */
-	partyList: [],
-
-
-	/**
-	 * 選択されているキャラクタリストのオブジェクト管理
-	 */
-	selectCharaList: [],
-
 
 	/**
 	 * キャラクター一覧
@@ -120,6 +127,11 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		base.setAnchorPoint(0.5, 0);
 		base.x = size.width / 2;
 		base.y = 220;
+		
+		var base_delay = cc.DelayTime.create(0.5);
+		var base_jump = cc.JumpBy.create(0.5, cc.p(0, 0), 25, 2);
+		var base_sequence = cc.Sequence.create(base_delay, base_jump);
+		base.runAction(base_sequence);
 
 		var charaList = [
 		                 manager.charaDataList[1],
@@ -133,15 +145,15 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		var y = listHeight;
 		var margin = 4;
 		var charaWidth = 80;
+		
 		_.each(charaList, function (charaData, index) {
 			var chara = self._createSelectListChara({
 				x: x,
 				y: y,
 				data: charaData
 			});
+			
 			base.addChild(chara);
-			//タッチイベント登録
-			self._addTouchEvent(chara);
 
 			if (index !== 0 && index % ROWMAX === 0) {
 				x = 0;
@@ -156,68 +168,9 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 	},
 
 
-	/**
-	 * タッチイベント
-	 */
-	_addTouchEvent: function (layer) {
-		var self = this;
-		var size = cc.winSize;
-
-		var listner = cc.EventListener.create({
-			event: cc.EventListener.TOUCH_ALL_AT_ONCE,
-
-			onTouchesBegan: function(touches, event) {
-				var touch = touches[0];
-				var loc = touch.getLocation();
-				var target = event.getCurrentTarget();
-				var posInScreen = target.convertToNodeSpace(touch.getLocation());
-				var targetSize = target.getContentSize();
-				var rect = cc.rect(0, 0, targetSize.width, targetSize.height);
-
-				if(cc.rectContainsPoint(rect, posInScreen)){
-
-					if (!target.data) {
-						return true;
-					}
-
-					var money = manager.getFunds();
-					var charaValue = layer.data.value;
-					if( !charaValue ) {
-						return true;
-					}
-					
-					money -= charaValue;
-					
-					console.log( "a_money = " + money);
-					manager.setFunds(money);
-					
-					return true;
-				}
-
-				return false;
-			},
-
-			onTouchesMoved: function(touches, event) {
-				var touch = touches[0];
-				var loc = touch.getLocation();
-
-			},
-
-			onTouchesEnded: function(touches, event){
-				var touch = touches[0];
-				var loc = touch.getLocation();
-
-			}
-		});
-		
-		cc.eventManager.addListener(listner, layer);
-		return;
-	},
-
-
-	/**
-	 * キャラクタを選択する一覧
-	 */
+	/////////////
+	// リストに設置するキャラクタ設定
+	/////////////
 	_createSelectListChara: function (config) {
 		var self = this;
 		var data = config.data || {};
@@ -228,7 +181,8 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		chara.y = config.y;
 		chara.data = data;
 		chara.value = 10;
-		//タッチイベント登録
+		
+		// タッチイベント登録
 		self._addTouchEvent(chara);
 
 		var selectLabel = cc.LabelTTF('SELECT', "Arial-BoldMT", 14);
@@ -238,33 +192,224 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		selectLabel.visible = false;
 		chara.addChild(selectLabel);
 
-		chara.setSelectStatus = function (isSelect) {
-			if (!isSelect) {
-				//選択状態解除
-				chara.isSelect = false;
-				selectLabel.visible = false;
-				return;
-			}
-
-			//選択状態に
-			chara.isSelect = true;
-			selectLabel.visible = true;
-
-			return;
-		};
-
-		var indexOf = _.indexOf(self.partyList, data.id);
-		if (indexOf !== -1) {
-			//パーティーに含まれていれば選択状態に
-			chara.setSelectStatus(true);
-			self.selectCharaList[indexOf] = chara;
-		} else {
-			//パーティーに含まれていなければ非選択状態に
-			chara.setSelectStatus(false);
-		}
-
 		return chara;
 	},
+	
+	/////////////
+	// 購入数を確定するウィンドウを出す
+	/////////////
+	_createPurchaseCounter: function (config) {
+		var self = this;
+		var data = config.data || {};
+		var size = cc.winSize;
+		var purchaseCounter = 0;
+		var charaValue = config.data.value;
+		var money = manager.getFunds();
+		
+		// ウィンドウの基本設定
+		var base = cc.LayerColor();
+		base.ignoreAnchorPointForPosition(false);
+		base.setContentSize(size.width - 100, size.width - 100);
+		base.setColor(cc.color(0, 236, 236));
+		base.setAnchorPoint(0.5, 0);
+		base.x = size.width / 2;
+		base.y = (size.height / 2) - (base.height / 2);
+		
+		// ウィンドウの出現アニメーション設定
+		var base_delay = cc.DelayTime.create(0);
+		var base_jump = cc.JumpBy.create(0.5, cc.p(0, 0), 25, 2);
+		var base_sequence = cc.Sequence.create(base_delay, base_jump);
+		base.runAction(base_sequence);
+		
+		// ウィンドウに出すキャラクタの設定
+		var charaSprite = cc.Sprite(data.image);
+		charaSprite.setScale(1.5, 1.5);
+		charaSprite.x = base.width / 2;
+		charaSprite.y = base.height / 2;
+		base.addChild(charaSprite);
+		
+		var countLabel = cc.LabelTTF('× ' + purchaseCounter, "Arial-BoldMT", 64);
+		countLabel.setColor(cc.color(0, 0, 0));
+		countLabel.setPosition(base.width / 2, base.height / 1.25);
+		countLabel.setAnchorPoint(0.5, 0.5);
+		base.addChild(countLabel);
+		
+		var valueLabel = cc.LabelTTF('value: ' + charaValue, "Arial-BoldMT", 14);
+		valueLabel.setColor(cc.color(0, 0, 0));
+		valueLabel.setPosition(charaSprite._getWidth() / 2, 0);
+		valueLabel.setAnchorPoint(0.5, 0.5);
+		charaSprite.addChild(valueLabel);
+		
+		// 購入数をあげるボタンを設定する
+		var counterUpButton = new cc.MenuItemImage(
+				res.DecideNormal,
+				res.DecideSelect,
+				
+				function () {
+					
+					// 購入数を上げる		
+					if(charaValue <= money - (charaValue * purchaseCounter)) {
+						purchaseCounter++;
+					}
+					
+					// ラベル表示の変更
+					countLabel.setString('× ' + purchaseCounter);
+				}, this);
+		counterUpButton.setScale(0.5, 0.5);
+		counterUpButton.x = 0;
+		counterUpButton.y = 0;
+		
+		// ボタンをメニューに格納して、画面に配置
+		var upMenu = new cc.Menu(counterUpButton);
+		upMenu.x = base.width - 50;
+		upMenu.y = 250;
+		base.addChild(upMenu);
+		
+		// 購入数を下げるボタンを設定する
+		var counterDownButton = new cc.MenuItemImage(
+				res.DecideNormal,
+				res.DecideSelect,
+
+				function () {
+					// 購入数を下げる
+					if( purchaseCounter > 0) {
+						purchaseCounter--;
+						
+						// ラベル表示の変更
+						countLabel.setString('× ' + purchaseCounter);
+					}
+				}, this);
+		counterDownButton.setScale(0.5, 0.5);
+		counterDownButton.x = 0;
+		counterDownButton.y = 0;
+
+		// ボタンをメニューに格納して、画面に配置
+		var downMenu = new cc.Menu(counterDownButton);
+		downMenu.x = base.width - 50;
+		downMenu.y = 125;
+		base.addChild(downMenu);
+		
+		// 確定ボタンを設定する
+		var fixButton = new cc.MenuItemImage(
+				res.DecideNormal,
+				res.DecideSelect,
+
+				function () {										
+					// キャラクタをアクティブにする
+					self.charaListActiveSwitch = true;
+					
+					// 購入額を計算して更新
+					money -= charaValue * purchaseCounter;
+					manager.setFunds(money);
+					
+					// 所持金ラベルを更新
+					self.currentMoneyLabel.setString('$ ' + manager.getFunds());
+					
+					// ウィンドウを閉じる
+					self.removeChild(base);
+					cc.log("購入を確定しました。");
+				}, this);
+		fixButton.setScale(0.3, 0.3);
+		fixButton.x = 0;
+		fixButton.y = 0;
+
+		// ボタンをメニューに格納して、画面に配置
+		var fixMenu = new cc.Menu(fixButton);
+		fixMenu.x = base.width / 1.5;
+		fixMenu.y = 50;
+		base.addChild(fixMenu);
+		
+		// ウィンドウを閉じるボタンを設定する
+		var backButton = new cc.MenuItemImage(
+				res.DecideNormal,
+				res.DecideSelect,
+				
+				function () {
+					// キャラクタをアクティブにする
+					self.charaListActiveSwitch = true;
+					
+					// ウィンドウを閉じる
+					self.removeChild(base);
+					cc.log("購入をキャンセルしました。");
+				}, this);
+		backButton.setScale(0.3, 0.3);
+		backButton.x = 0;
+		backButton.y = 0;
+		
+		// ボタンをメニューに格納して、画面に配置
+		var backMenu = new cc.Menu(backButton);
+		backMenu.x = base.width / 2.5;
+		backMenu.y = 50;
+		base.addChild(backMenu);
+		
+		return base;
+	},
+	
+	
+	/////////////
+	// 画面がタップされた際のイベント処理
+	/////////////
+	_addTouchEvent: function (layer) {
+		var self = this;
+		var size = cc.winSize;
+
+		var listner = cc.EventListener.create({
+			event: cc.EventListener.TOUCH_ALL_AT_ONCE,
+
+			//+++ タップされた瞬間の処理 +++//
+			onTouchesBegan: function(touches, event) {
+				var touch = touches[0];
+				var loc = touch.getLocation();
+				var target = event.getCurrentTarget();
+				var posInScreen = target.convertToNodeSpace(touch.getLocation());
+				var targetSize = target.getContentSize();
+				var rect = cc.rect(0, 0, targetSize.width, targetSize.height);
+				
+				// 画面内のキャラクタとの当たり判定をとる
+				if(cc.rectContainsPoint(rect, posInScreen)){
+					
+					// ターゲットのデータがない場合、処理を終える
+					if (!target.data) {
+						return true;
+					}
+					
+					if (!self.charaListActiveSwitch) {
+						return true;
+					}
+					
+					// キャラクタを非アクティブにする
+					self.charaListActiveSwitch = false;
+
+					// キャラクタを購入するためのウィンドウを作って設置する
+					var counter = self._createPurchaseCounter(layer);
+					if(counter) {
+						self.addChild(counter);
+					}
+
+					return true;
+				}
+
+				return false;
+			},
+
+			//+++ スワイプ中の処理 +++//
+			onTouchesMoved: function(touches, event) {
+				var touch = touches[0];
+				var loc = touch.getLocation();
+
+			},
+			
+			//+++ タップが離れた場合の処理 +++//
+			onTouchesEnded: function(touches, event){
+				var touch = touches[0];
+				var loc = touch.getLocation();
+
+			}
+		});
+
+		cc.eventManager.addListener(listner, layer);
+		return;
+	}
 });
 
 var CharacterStoreScene = cc.Scene.extend({
