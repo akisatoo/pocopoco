@@ -156,6 +156,13 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 	},
 	
 	
+	_createPossessedList: function (config) {
+		config = config || {};
+		var self = this;
+		var size = cc.winSize;
+	},
+	
+	
 	/**
 	 * タッチイベント
 	 */
@@ -198,7 +205,7 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 					self.slotBlock._instance.slotUpdate(target.data);
 					
 					self.partyList[self.slotBlock._instance.currIndex] = target.data.id;
-					manager.setPartyList(self.partyList)
+					manager.setPartyList(self.partyList);
 					return true;
 				}
 

@@ -1,7 +1,7 @@
 var lib = lib || new Lib();
 var manager = manager || new Manager();
 
-var NextLayer = cc.LayerColor.extend({
+var ResultLayer = cc.LayerColor.extend({
 	sprite: null,
 	ctor: function (config) {
 		config = config || {};
@@ -11,21 +11,22 @@ var NextLayer = cc.LayerColor.extend({
 		var size = cc.winSize;
 
 		self.setColor(cc.color(255, 255, 255));
-
-		var overImage = cc.Sprite.create(res.GameoverImage);
-		overImage.x = size.width / 2;
-		overImage.y = size.height / 2;
-		self.addChild(overImage);
-
+		
+		var titleText = cc.LabelTTF('リザルト', 'Meiryo', 42);
+		titleText.setColor(cc.color(0, 0, 0));
+		titleText.setAnchorPoint(cc.p(0.5, 0.5));
+		titleText.textAlign = cc.TEXT_ALIGNMENT_CENTER;
+		titleText.x = size.width / 2;
+		titleText.y = size.height - 40;
+		self.addChild(titleText);
+		
 		var closeItem = new cc.MenuItemImage(
 			res.TitleNormal,
 			res.TitleSelect,
 			function () {
 
 				//タイトル
-				cc.director.runScene(cc.TransitionFade(1.2, new GameScene({
-					level: 1
-				})));
+				cc.director.runScene(cc.TransitionFade(1.2, new HomeScene()));
 
 			}, this);
 		closeItem.attr({
@@ -46,11 +47,11 @@ var NextLayer = cc.LayerColor.extend({
 });
 
 
-var NextScene = cc.Scene.extend({
+var ResultScene = cc.Scene.extend({
 	onEnter:function () {
 		this._super();
 
-		var layer = new NextLayer();
+		var layer = new ResultLayer();
 		this.addChild(layer);
 	}
 });

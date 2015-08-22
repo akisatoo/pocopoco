@@ -74,7 +74,7 @@ var CharacterMenuLayer = cc.LayerColor.extend({
 	           {
 	        	   id: 3,
 	        	   title: '勇者を雇う',
-	        	   scene: 'CharacterSelectScene'
+	        	   scene: 'CharacterStoreScene'
 	           }],
 	
 	/**

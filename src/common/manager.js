@@ -39,7 +39,8 @@ var Manager = null;
 		 */
 		gameMoney: 0,
 		getFunds: function () {
-			return cc.sys.localStorage.getItem('funds');
+			n = cc.sys.localStorage.getItem('funds');
+			return Number(n);
 		},
 		
 		setFunds: function (funds) {
@@ -112,25 +113,25 @@ var Manager = null;
 				id: 1,
 				name: 'ダンジョン1',
 				type: 'vertical',
-				count: 3
+				level: 3
 			},
 			{
 				id: 2,
 				name: 'ダンジョン2',
 				type: 'vertical',
-				count: 3
+				level: 3
 			},
 			{
 				id: 3,
 				name: 'ダンジョン3',
 				type: 'vertical',
-				count: 3
+				level: 3
 			},
 			{
 				id: 4,
 				name: 'ダンジョン4',
 				type: 'vertical',
-				count: 3
+				level: 3
 			},
 		],
 		
@@ -141,6 +142,7 @@ var Manager = null;
 			1: {
 				id: 1,
 				name: 'princess',
+				value: 1,
 				image: res.PrincessRight1,
 				animPattern: {
 					normal: [res.PrincessRight1, res.PrincessRight2]
@@ -149,6 +151,7 @@ var Manager = null;
 			2: {
 				id: 2,
 				name: 'hero',
+				value: 2,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],
@@ -160,6 +163,7 @@ var Manager = null;
 			3: {
 				id: 3,
 				name: 'magician',
+				value: 3,
 				image: res.MagicianRight1,
 				animPattern: {
 					normal: [res.MagicianRight1, res.MagicianRight2],
@@ -172,6 +176,7 @@ var Manager = null;
 			4: {
 				id: 4,
 				name: 'hero2',
+				value: 4,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],
@@ -183,6 +188,7 @@ var Manager = null;
 			5: {
 				id: 5,
 				name: 'hero3',
+				value: 5,
 				image: res.HeroRight1,
 				animPattern: {
 					normal: [res.HeroRight1, res.HeroRight2],
@@ -207,6 +213,7 @@ var Manager = null;
 					right: [res.EnemyRight1, res.EnemyRight2],
 					left: [res.EnemyLeft1, res.EnemyLeft2]
 				},
+				movePattern: 0
 			}
 		},
 		
