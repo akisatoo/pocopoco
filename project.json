@@ -37,6 +37,7 @@
         "src/home.js",
         "src/sound.js",
         "src/credit.js",
-        "src/pattern/attack/attack0.js"
+        "src/pattern/attack/attack0.js",
+        "src/menuheros.js"
     ]
 }
