@@ -38,7 +38,7 @@
     "src/sound.js",
     "src/credit.js",
     "src/pattern/attack/attack0.js",
-    "src/result.js"
+    "src/result.js",
     "src/menuheros.js"
   ]
 
