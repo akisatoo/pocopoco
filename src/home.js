@@ -12,15 +12,43 @@ var HomeLayer = cc.LayerColor.extend({
 		this._super();
 		var self = this;
 		var size = cc.winSize;
-	
+		
+		self.isUpdate = true;
+		
 		self.setColor(cc.color(100, 100, 100));
 	
 		var bg = cc.Sprite(res.Background);
 		bg.x = size.width / 2;
 		bg.y = size.height / 2;
 		self.addChild(bg, 0);
+
+		//フッターの生成
+		var footer = ui.createFooterMenu({
+			currScene: 'home'
+		});
 		
-		// キャラ画面への遷移ボタン
+		//===============画面上をキャラが動く処理==========================
+		//プレイヤーキャラリストの取得
+		var heroListLength = Object.keys(manager.charaDataList).length;
+		self.hero = [];
+
+		//キャラを画面上に生成
+		for (var i = 0; i < heroListLength; ++i){
+			//
+			var xpos = Math.floor(Math.random() * size.width);
+			var ypos = footer.height + Math.floor(Math.random() * (size.height - (footer.height + 120)));
+			self.hero[i] = new MenuHeros(_.extend(manager.charaDataList[i + 1], {
+				x: xpos,
+				y: ypos,
+			}));
+			self.addChild(self.hero[i]);
+		}
+
+		//self.heros.push(hero);
+		//console.log(heroListLength);
+		//============================================================
+		
+		//================キャラ画面への遷移ボタン=======================
 		var charaMenu = new cc.MenuItemImage(
 				res.CharaMenu,
 				res.CharaMenu,
@@ -31,7 +59,6 @@ var HomeLayer = cc.LayerColor.extend({
 						//level: 1,
 						//warfunds: 10000
 					})));
-
 				}, this);
 		charaMenu.attr({
 			x: size.width / 2,
@@ -44,8 +71,9 @@ var HomeLayer = cc.LayerColor.extend({
 		chara.x = 0;
 		chara.y = 0;
 		self.addChild(chara);
-		
-		// ダンジョン選択画面への遷移ボタン
+		//============================================================
+
+		//==========ダンジョン選択画面への遷移ボタン=========================
 		var dungeonMenu = new cc.MenuItemImage(
 				res.DungonMenu,
 				res.DungonMenu,
@@ -69,8 +97,9 @@ var HomeLayer = cc.LayerColor.extend({
 		dungeon.x = 0;
 		dungeon.y = 0;
 		self.addChild(dungeon);
-		
-		// 設定画面への遷移ボタン
+		//============================================================
+
+		//==============設定画面への遷移ボタン=============================
 		var settingMenu = new cc.MenuItemImage(
 				res.SettingMenu,
 				res.SettingMenu,
@@ -94,30 +123,49 @@ var HomeLayer = cc.LayerColor.extend({
 		setting.x = 0;
 		setting.y = 0;
 		self.addChild(setting);
-		
-	
+
+
 		var header = ui.createHeader({
 			x: 0,
 			y: size.height,
 			title: 'ホームだよ'
 		});
 		self.addChild(header);
-	
-		/*var tableView = cc.TableView(self, cc.size(size.width, size.height - self.headerHeight - self.margin.height - 80));
-		tableView.setColor(cc.color(255, 0, 0));
-		tableView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
-		tableView.setPosition(0, 80);
-		tableView.setDelegate(self);
-		self.addChild(tableView);
-	*/
-		var footer = ui.createFooterMenu({
-			currScene: 'home'
-		});
+		//============================================================
+		
+		//フッターの表示
 		self.addChild(footer);
+		
+		//update開始
+		self.scheduleUpdate();
 	
 		return true;
 	},
-	
+	/**
+	 * アップデート
+	 */
+	update: function () {
+		var self = this;
+
+		if (!self.isUpdate) {
+			return;
+		}
+
+
+		_.each(self.hero, function (hero, index) {
+			if (!hero) {
+				return;
+			}
+			hero._instance.update();	//ヒーローのupdate
+			return;
+		});
+		/*
+		var heroListLength = Object.keys(manager.charaDataList).length;
+		for(var i = 0; i < heroListLength; ++i){
+			self.hero[i]._instance.update();
+		}
+		*/
+	},
 	
 	/**
 	 * ヘッダーの高さ
@@ -161,16 +209,10 @@ var HomeLayer = cc.LayerColor.extend({
 		   self.onTouchedMenu(cell);
 	   }
 	
-	   var itemFont = cc.MenuItemFont(self.homeMenuList[idx].title, func);
-	   itemFont.setAnchorPoint(0, 0.5);
-	
-	   var menu = cc.Menu(itemFont);
-	   menu.setColor(cc.color(0, 0, 0));
-	   menu.setPosition(50, bgSize.height / 2);
-	   bg.addChild(menu);
-	
 	   return cell;
 	}, 
+	
+	
 	
 	               
 	});
@@ -187,8 +229,4 @@ var HomeLayer = cc.LayerColor.extend({
 });
 
 Scene['HomeScene'] = HomeScene;
-
-
-
-
 
