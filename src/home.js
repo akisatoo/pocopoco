@@ -29,7 +29,7 @@ var HomeLayer = cc.LayerColor.extend({
 		
 		//===============画面上をキャラが動く処理==========================
 		//プレイヤーキャラリストの取得
-		var heroListLength = Object.keys(manager.charaDataList).length;
+		var heroListLength = Object.keys(manager.charaDataList()).length;
 		self.hero = [];
 
 		//キャラを画面上に生成
@@ -37,7 +37,8 @@ var HomeLayer = cc.LayerColor.extend({
 			//
 			var xpos = Math.floor(Math.random() * size.width);
 			var ypos = footer.height + Math.floor(Math.random() * (size.height - (footer.height + 120)));
-			self.hero[i] = new MenuHeros(_.extend(manager.charaDataList[i + 1], {
+			
+			self.hero[i] = new MenuHeros(_.extend({}, manager.charaDataList()[i + 1], {
 				x: xpos,
 				y: ypos,
 			}));

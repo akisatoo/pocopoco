@@ -31,7 +31,7 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		var slotData = [];
 		self.partyList = manager.getPartyList();
 		_.each(self.partyList, function (partyId) {
-			slotData.push(manager.charaDataList[partyId]);
+			slotData.push(manager.charaDataList()[partyId]);
 			return;
 		});
 
@@ -50,7 +50,7 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		var list = self._createCharaList();
 		self.addChild(list);
 
-		
+		cc.log(config.pageType);
 		//決定ボタン
 		var decideItem = new cc.MenuItemImage(
 			res.DecideNormal,
@@ -121,11 +121,11 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		
 		
 		var charaList = [
-            manager.charaDataList[1],
-            manager.charaDataList[2],
-            manager.charaDataList[3],
-            manager.charaDataList[4],
-            manager.charaDataList[5]
+            manager.charaDataList()[1],
+            manager.charaDataList()[2],
+            manager.charaDataList()[3],
+            manager.charaDataList()[4],
+            manager.charaDataList()[5]
         ];
 		
 		var x = 0;

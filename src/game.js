@@ -38,7 +38,7 @@ var GameLayer = cc.LayerColor.extend({
 		self.slotData = [];
 		self.partyList = manager.getPartyList();
 		_.each(self.partyList, function (partyId) {
-			self.slotData.push(manager.charaDataList[partyId]);
+			self.slotData.push(manager.charaDataList()[partyId]);
 			return;
 		});
 		
@@ -63,7 +63,7 @@ var GameLayer = cc.LayerColor.extend({
 		//敵の生成
 		var enemyMax = 10;
 		for (var i = 0; i < enemyMax; i++) {
-			var enemy = new BaseEnemy(_.extend(manager.enemyDataList['underling'], {
+			var enemy = new BaseEnemy(_.extend({}, manager.enemyDataList["underling"], {
 				dungeonType: self.dungeonData.type,
 				target: self.princess
 			}));
@@ -231,7 +231,7 @@ var GameLayer = cc.LayerColor.extend({
 				   //選択中のスロットが空か
 				   return true;
 			   }
-			   
+			  
 			   var currIndex = self.slotBlock._instance.currIndex;
 			   var hero = new BaseHero(_.extend(self.slotData[currIndex], {
 				   x: pos.x,
