@@ -32,7 +32,7 @@ App.pattern.move = App.pattern.move || [];
 			config = config || {};
 			var self = this;
 			var target = self.princess;
-			var speed = 1.0;
+			var speed = self._speed;
 			var rad = Math.atan2(target.y - self.chara.y, target.x - self.chara.x);
 			
 			if(self.firstFrame) {

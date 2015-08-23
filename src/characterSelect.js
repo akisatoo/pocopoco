@@ -120,18 +120,23 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		base.y = 220;
 		
 		
-		var charaList = [
-            manager.charaDataList()[1],
-            manager.charaDataList()[2],
-            manager.charaDataList()[3],
-            manager.charaDataList()[4],
-            manager.charaDataList()[5]
-        ];
+		var charaList = manager.charaDataList();
+		/*
+		var dataList = manager.charaDataList();
+		_.each(dataList, function(ch) {
+			if (ch.lock) {
+				return;
+			}
+			charaList.push(ch);
+			return;
+		});
+		*/
 		
 		var x = 0;
 		var y = listHeight;
 		var margin = 4;
 		var charaWidth = 80;
+		var count = 1;
 		_.each(charaList, function (charaData, index) {
 			var chara = self._createSelectListChara({
 				x: x,
@@ -142,12 +147,13 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 			//タッチイベント登録
 			self._addTouchEvent(chara);
 			
-			if (index !== 0 && index % ROWMAX === 0) {
+			if (count !== 0 && count % ROWMAX === 0) {
 				x = 0;
 				y -= charaWidth;
 			} else {
 				x += (charaWidth);
 			}
+			count++;
 			return;
 		});
 		
@@ -250,6 +256,13 @@ var CharacterSelectLayer = cc.LayerColor.extend({
 		selectLabel.setAnchorPoint(0.5, 0.5);
 		selectLabel.visible = false;
 		chara.addChild(selectLabel);
+		
+		var charaDatas = manager.charaDataList();
+		var countLabel = cc.LabelTTF('× ' + (charaDatas[data.id].count || 0), "Arial-BoldMT", 14);
+		countLabel.setColor(cc.color(0, 0, 0));
+		countLabel.setPosition(chara.width / 2, 0);
+		countLabel.setAnchorPoint(0.5, 1);
+		chara.addChild(countLabel);
 		
 		chara.setSelectStatus = function (isSelect) {
 			if (!isSelect) {

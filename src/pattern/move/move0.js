@@ -24,7 +24,7 @@ App.pattern.move = App.pattern.move || [];
 			config = config || {};
 			var self = this;
 			var target = config.target;
-			var speed = 2;
+			var speed = self._speed;
 
 			//radianをだす
 			var rad = Math.atan2(target.y - self.chara.y, target.x - self.chara.x);

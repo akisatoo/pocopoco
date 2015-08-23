@@ -31,7 +31,7 @@ App.pattern.move = App.pattern.move || [];
 			config = config || {};
 			var self = this;
 			var target = config.target;
-			var speed = 10;
+			var speed = self._speed;
 			
 			/**
 			 * 移動状態を判定する

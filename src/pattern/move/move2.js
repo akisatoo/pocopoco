@@ -30,7 +30,7 @@ App.pattern.move = App.pattern.move || [];
 		
 				var self = this;
 				var target = config.target;
-				var speed = 4;
+				var speed = self._speed;
 				//var addSpeed = speed;
 				//var speedMin = 1;
 

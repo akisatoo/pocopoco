@@ -27,7 +27,7 @@ App.pattern.move = App.pattern.move || [];
 		
 				var self = this;
 				var target = config.target;
-				var speed = 2;
+				var speed = self._speed;
 				//var addSpeed = speed;
 				//var speedMax = 10;
 

@@ -27,7 +27,7 @@ App.pattern.move = App.pattern.move || [];
 			config = config || {};
 			var self = this;
 			var target = config.target;
-			var speed = 2;
+			var speed = self._speed;
 			
 			// targetとの距離を出す
 			var dis = Math.sqrt(Math.pow(target.y - self.chara.y, 2) + Math.pow(target.x - self.chara.x, 2));

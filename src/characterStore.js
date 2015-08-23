@@ -139,7 +139,7 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		var y = listHeight;
 		var margin = 4;
 		var charaWidth = 80;
-		
+		var count = 1;
 		_.each(charaList, function (charaData, index) {
 			var chara = self._createSelectListChara({
 				x: x,
@@ -149,12 +149,13 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 			
 			base.addChild(chara);
 
-			if (index !== 0 && index % ROWMAX === 0) {
+			if (count !== 0 && count % ROWMAX === 0) {
 				x = 0;
 				y -= charaWidth;
 			} else {
 				x += (charaWidth);
 			}
+			count++;
 			return;
 		});
 
