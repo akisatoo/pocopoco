@@ -138,64 +138,168 @@ var Manager = null;
 		/**
 		 * キャラクターデータ
 		 */
-		charaDataList: {
-			1: {
-				id: 1,
-				name: 'princess',
-				value: 1,
-				image: res.PrincessRight1,
-				animPattern: {
-					normal: [res.PrincessRight1, res.PrincessRight2]
+		charaDataList: function() {
+			var list = cc.sys.localStorage.getItem('charaDataList');
+			
+			if (!list || list === '') {
+				list = this.charaBaseDataList;
+				this.setCharaDataList(list);
+			}else {
+				//文字列からJSON形式に変換
+				list = JSON.parse(list);
+			}
+			return list;
+		},
+		
+		removeCharaDataList: function() {
+			cc.sys.localStorage.removeItem('charaDataList');
+			return;
+		},
+		
+		
+		/**
+		 * キャラクタデータの保持
+		 */
+		setCharaDataList: function(data) {
+			var list = JSON.stringify(data);
+			cc.sys.localStorage.setItem('charaDataList', list);
+			return;
+		},
+		
+		
+		/**
+		 * キャラクター情報
+		 */
+		charaBaseDataList: {
+			"1": {
+				"id": 1,
+				"name": "princess",
+				"lock": false,
+				"value": 1,
+				"image": "res/princess/princess_right1.png",
+				"animPattern": {
+					"normal": ["res/princess/princess_right1.png", "res/princess/princess_right2.png"]
 				}
 			},
-			2: {
-				id: 2,
-				name: 'hero',
-				value: 2,
-				image: res.HeroRight1,
-				animPattern: {
-					normal: [res.HeroRight1, res.HeroRight2],
-					right: [res.HeroRight1, res.HeroRight2],
-					left: [res.HeroLeft1, res.HeroLeft2]
+			"2": {
+				"id": 2,
+				"name": "hero",
+				"lock": false,
+				"value": 2,
+				"count": 0,
+				"image": "res/hero/hero_right1.png",
+				"animPattern": {
+					"normal": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"right": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"left": ["res/hero/hero_left1.png", "res/hero/hero_left2.png"]
 				},
-				movePattern: 0
+				"movePattern": 0,
+				"hitpoint": 100,
+				"attack": 80,
+				"speed": 1,
+				"level": 1,
+				"growth": 0.1,
+				"exp": 0
 			},
-			3: {
-				id: 3,
-				name: 'magician',
-				value: 3,
-				image: res.MagicianRight1,
-				animPattern: {
-					normal: [res.MagicianRight1, res.MagicianRight2],
-					right: [res.MagicianRight1, res.MagicianRight2],
-					left: [res.MagicianLeft1, res.MagicianLeft2]
+			"3": {
+				"id": 3,
+				"name": "magician",
+				"lock": false,
+				"value": 3,
+				"count": 0,
+				"image": "res/magician/magician_right1.png",
+				"animPattern": {
+					"normal": ["res/magician/magician_right1.png", "res/magician/magician_right2.png"],
+					"right": ["res/magician/magician_right1.png", "res/magician/magician_right2.png"],
+					"left": ["res/magician/magician_left1.png", "res/magician/magician_left2.png"]
 				},
-				//movePattern: 0,
-				attackPattern: 0
+				"attackPattern": 0,
+				"hitpoint": 2,
+				"attack": 1,
+				"speed": 1,
+				"level": 1,
+				"growth": 0.1,
+				"exp": 0
 			},
-			4: {
-				id: 4,
-				name: 'hero2',
-				value: 4,
-				image: res.HeroRight1,
-				animPattern: {
-					normal: [res.HeroRight1, res.HeroRight2],
-					right: [res.HeroRight1, res.HeroRight2],
-					left: [res.HeroLeft1, res.HeroLeft2]
+			"4": {
+				"id": 4,
+				"name": "hero2",
+				"lock": false,
+				"value": 4,
+				"count": 0,
+				"image": "res/hero/hero_right1.png",
+				"animPattern": {
+					"normal": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"right": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"left": ["res/hero/hero_left1.png", "res/hero/hero_left2.png"]
 				},
-				movePattern: 0
+				"movePattern": 0,
+				"hitpoint": 2,
+				"attack": 1,
+				"speed": 1,
+				"level": 1,
+				"growth": 0.1,
+				"exp": 0
 			},
-			5: {
-				id: 5,
-				name: 'hero3',
-				value: 5,
-				image: res.HeroRight1,
-				animPattern: {
-					normal: [res.HeroRight1, res.HeroRight2],
-					right: [res.HeroRight1, res.HeroRight2],
-					left: [res.HeroLeft1, res.HeroLeft2]
+			"5": {
+				"id": 5,
+				"name": "hero3",
+				"lock": false,
+				"value": 5,
+				"count": 0,
+				"image": "res/hero/hero_right1.png",
+				"animPattern": {
+					"normal": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"right": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"left": ["res/hero/hero_left1.png", "res/hero/hero_left2.png"]
 				},
-				movePattern: 0
+				"movePattern": 0,
+				"hitpoint": 10,
+				"attack": 1,
+				"speed": 1,
+				"level": 1,
+				"growth": 0.1,
+				"exp": 0
+			},
+			"6": {
+				"id": 6,
+				"name": "hero4",
+				"lock": true,
+				"value": 5,
+				"count": 0,
+				"image": "res/hero/hero_right1.png",
+				"animPattern": {
+					"normal": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"right": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"left": ["res/hero/hero_left1.png", "res/hero/hero_left2.png"]
+				},
+				"movePattern": 0,
+				"hitpoint": 10,
+				"attack": 1,
+				"speed": 1,
+				"level": 1,
+				"growth": 0.1,
+				"exp": 0
+			},
+			"7": {
+				"id": 7,
+				"name": "hero5",
+				"lock": true,
+				"value": 5,
+				"count": 0,
+				"image": "res/hero/hero_right1.png",
+				"animPattern": {
+					"normal": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"right": ["res/hero/hero_right1.png", "res/hero/hero_right2.png"],
+					"left": ["res/hero/hero_left1.png", "res/hero/hero_left2.png"]
+				},
+				"movePattern": 0,
+				"hitpoint": 10,
+				"attack": 1,
+				"speed": 1,
+				"level": 1,
+				"growth": 0.1,
+				"exp": 0
 			},
 		},
 		
@@ -204,16 +308,21 @@ var Manager = null;
 		 * キャラクターデータ
 		 */
 		enemyDataList: {
-			'underling': {
-				id: 1,
-				name: 'underling',
-				image: res.EnemyLeft1,
-				animPattern: {
-					normal: [res.EnemyLeft1, res.EnemyLeft2],
-					right: [res.EnemyRight1, res.EnemyRight2],
-					left: [res.EnemyLeft1, res.EnemyLeft2]
+			"underling": {
+				"id": 1,
+				"name": "underling",
+				"image": "res/enemy/Kaijin_1.png",
+				"animPattern": {
+					"normal": ["res/enemy/Kaijin_1.png", "res/enemy/Kaijin_2.png"],
+					"right": ["res/enemy/Kaijin_3.png", "res/enemy/Kaijin_4.png"],
+					"left": ["res/enemy/Kaijin_1.png", "res/enemy/Kaijin_2.png"]
 				},
-				movePattern: 0
+				"movePattern": 0,
+				"hitpoint": 100,
+				"attack": 1,
+				"speed": 1,
+				"level": 1,
+				"exp": 0
 			}
 		},
 		

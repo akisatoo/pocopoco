@@ -50,7 +50,7 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		var slotData = [];
 		self.partyList = manager.getPartyList();
 		_.each(self.partyList, function (partyId) {
-			slotData.push(manager.charaDataList[partyId]);
+			slotData.push(manager.charaDataList()[partyId]);
 			return;
 		});
 
@@ -133,13 +133,7 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		var base_sequence = cc.Sequence.create(base_delay, base_jump);
 		base.runAction(base_sequence);
 
-		var charaList = [
-		                 manager.charaDataList[1],
-		                 manager.charaDataList[2],
-		                 manager.charaDataList[3],
-		                 manager.charaDataList[4],
-		                 manager.charaDataList[5]
-		                 ];
+		var charaList = manager.charaDataList();
 
 		var x = 0;
 		var y = listHeight;
@@ -191,6 +185,18 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 		selectLabel.setAnchorPoint(0.5, 0.5);
 		selectLabel.visible = false;
 		chara.addChild(selectLabel);
+		
+		var charaDatas = manager.charaDataList();
+		var countLabel = cc.LabelTTF('× ' + (charaDatas[data.id].count || 0), "Arial-BoldMT", 14);
+		countLabel.setColor(cc.color(0, 0, 0));
+		countLabel.setPosition(chara.width / 2, 0);
+		countLabel.setAnchorPoint(0.5, 1);
+		chara.addChild(countLabel);
+		
+		chara.updateCount = function(count) {
+			countLabel.setString('× ' + count);
+			return;
+		};
 
 		return chara;
 	},
@@ -304,6 +310,13 @@ var CharacterStoreLayer = cc.LayerColor.extend({
 					
 					// 所持金ラベルを更新
 					self.currentMoneyLabel.setString('$ ' + manager.getFunds());
+					
+					//所持数を更新
+					var charaDatas = manager.charaDataList();
+					charaDatas[data.id].count = charaDatas[data.id].count + purchaseCounter;
+					manager.setCharaDataList(charaDatas);
+					
+					config.updateCount(charaDatas[data.id].count);
 					
 					// ウィンドウを閉じる
 					self.removeChild(base);

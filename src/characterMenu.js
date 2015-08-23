@@ -162,7 +162,7 @@ var CharacterMenuLayer = cc.LayerColor.extend({
 		
 		cc.director.runScene(cc.TransitionFade(1.2, new Scene[cell.data.scene]({
 			level: 1,
-			pageType: 'dungeon',
+			pageType: 'charamenu',
 			dungeonData: cell.data
 		})));
 	}

@@ -69,7 +69,7 @@ var Slotcharacter = null;
 			self._animStart({
 				type: animType
 			});
-			
+
 			//インスタンスにthisを設定
 			self.slot._instance = self;
 
@@ -128,7 +128,6 @@ var Slotcharacter = null;
 
 			//アニメーションパターンの設定
 			self._animPattern = data.animPattern || {};
-
 			//アニメーション開始
 			self._animStart({
 				type: 'normal'
