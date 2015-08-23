@@ -199,7 +199,7 @@ var Manager = null;
 				"speed": 1,
 				"level": 1,
 				"growth": 0.1,
-				"exp": 0
+				"exp": 80
 			},
 			"3": {
 				"id": 3,
@@ -219,7 +219,7 @@ var Manager = null;
 				"speed": 1,
 				"level": 1,
 				"growth": 0.1,
-				"exp": 0
+				"exp": 50
 			},
 			"4": {
 				"id": 4,
@@ -239,7 +239,7 @@ var Manager = null;
 				"speed": 1,
 				"level": 1,
 				"growth": 0.1,
-				"exp": 0
+				"exp": 100
 			},
 			"5": {
 				"id": 5,
@@ -259,7 +259,7 @@ var Manager = null;
 				"speed": 1,
 				"level": 1,
 				"growth": 0.1,
-				"exp": 0
+				"exp": 99
 			},
 			"6": {
 				"id": 6,

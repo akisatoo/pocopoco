@@ -12,7 +12,7 @@ var TitleLayer = cc.LayerColor.extend({
 		var size = cc.winSize;
 		self.setColor(cc.color(255, 255, 255));
 		
-		//manager.removeCharaDataList();
+		manager.removeCharaDataList();
 		
 		var funds = 0;
 		//資金を取得

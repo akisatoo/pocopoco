@@ -47,6 +47,8 @@ var res = {
     BgmOn2: "res/common/on2.png",
     BgmOff: "res/common/off.png",
     BgmOff2: "res/common/off2.png",
+    ExpProgress: "res/result/exp_progress.png",
+    ExpProgressFrame: "res/result/progress_frame.png"
 };
 
 var g_resources = [];
