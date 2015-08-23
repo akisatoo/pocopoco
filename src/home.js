@@ -229,8 +229,14 @@ var HomeLayer = cc.LayerColor.extend({
 		if(cc.audioEngine.isMusicPlaying() ){
 			// BGMが再生されていれば何もしない
 		} else {
-			cc.audioEngine.setMusicVolume(1);// 音量の設定 0 ~ 1の範囲
-			cc.audioEngine.playMusic("res/bgm/Strategy.mp3", true);
+			if(manager.getBgm() != "off"){
+				//cc.audioEngine.stopMusic(res.MainBgm);
+				cc.audioEngine.setMusicVolume(1);// 音量の設定 0 ~ 1の範囲
+				cc.audioEngine.playMusic(res.MainBgm, true);
+			}else {
+				
+			}
+			
 			
 		}
 		

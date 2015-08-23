@@ -42,6 +42,11 @@ var res = {
     CharaMenu: "res/home/charaMenu.png",
     DungonMenu: "res/home/dungonMenu.png",
     SettingMenu: "res/home/settingMenu.png",
+    MainBgm: "res/bgm/Strategy.mp3",
+    BgmOn: "res/common/on.png",
+    BgmOn2: "res/common/on2.png",
+    BgmOff: "res/common/off.png",
+    BgmOff2: "res/common/off2.png",
 };
 
 var g_resources = [];

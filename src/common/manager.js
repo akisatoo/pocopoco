@@ -326,6 +326,19 @@ var Manager = null;
 			}
 		},
 		
+		/**
+		 * BGM再生のON,OFF用
+		 */
+		
+		getBgm: function () {
+			bgmState = cc.sys.localStorage.getItem('bgmState');
+			return bgmState;
+		},
+
+		setBgm: function (bgmState) {
+			cc.sys.localStorage.setItem('bgmState', bgmState);
+			return;
+		},
 
 	};
 })();

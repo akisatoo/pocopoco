@@ -25,14 +25,83 @@ var SoundLayer = cc.LayerColor.extend({
 			title: 'サウンド'
 		});
 		self.addChild(header);
+		
+		if(manager.getBgm() == "on"){
+			// onの時の画像
+			var on = res.BgmOn2;
+			var on2 = res.BgmOn;
+			// offの時の画像
+			var off = res.BgmOff;
+			var off2 = res.BgmOff2;
+		} else {
+			// onの時の画像
+			var on = res.BgmOn;
+			var on2 = res.BgmOn2;
+			// offの時の画像
+			var off = res.BgmOff2;
+			var off2 = res.BgmOff;
+		}
 
-		var tableView = cc.TableView(self, cc.size(size.width, size.height - self.headerHeight - self.margin.height - 80));
-		tableView.setColor(cc.color(255, 0, 0));
-		tableView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
-		tableView.setPosition(0, 80);
-		tableView.setDelegate(self);
-		self.addChild(tableView);
+		//==========BGM切り替えボタン／ON=========================
+		var bgmOn = new cc.MenuItemImage(
+				on,
+				on2,
+				function () {
+					//BGM判定用のフラグを変更
+					var bgmState = "on";
+					manager.setBgm(bgmState);
+					
+					//BGMをオンにする
+					cc.audioEngine.setMusicVolume(1);// 音量の設定 0 ~ 1の範囲
+					cc.audioEngine.playMusic(res.MainBgm, true);
+					
+					//設定ページへ戻る
+					cc.director.runScene(cc.TransitionFade(1.2, new SettingMenuScene({})));
 
+				}, this);
+
+		bgmOn.attr({
+			x: size.width / 2,
+			y: 400,
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+
+		var bgmOnButton = new cc.Menu(bgmOn);
+		bgmOnButton .x = 0;
+		bgmOnButton .y = 0;
+		self.addChild(bgmOnButton);
+		//============================================================
+		
+		//==========BGM切り替えボタン／OFF=========================
+		var bgmOff = new cc.MenuItemImage(
+				off,
+				off2,
+				function () {
+					//BGM判定用のフラグを変更
+					var bgmState = "off";
+					manager.setBgm(bgmState);
+					
+					//BGMをオフにする
+					cc.audioEngine.stopMusic(res.MainBgm);
+					
+					//設定ページへ戻る
+					cc.director.runScene(cc.TransitionFade(1.2, new SettingMenuScene({})));
+
+				}, this);
+		
+		bgmOff.attr({
+			x: size.width / 2,
+			y: 200,
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+
+		var bgmOffButton = new cc.Menu(bgmOff);
+		bgmOffButton .x = 0;
+		bgmOffButton .y = 0;
+		self.addChild(bgmOffButton);
+		//============================================================
 		var footer = ui.createFooterMenu({
 			currScene: 'setting'
 		});
@@ -161,7 +230,7 @@ var SoundLayer = cc.LayerColor.extend({
 var SoundScene = cc.Scene.extend({
 	onEnter:function () {
 		this._super();
-
+		
 		var layer = new SoundLayer();
 		this.addChild(layer);
 	}
