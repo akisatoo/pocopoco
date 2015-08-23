@@ -225,6 +225,15 @@ var HomeLayer = cc.LayerColor.extend({
 	
 		var layer = new HomeLayer();
 		this.addChild(layer);
+		
+		if(cc.audioEngine.isMusicPlaying() ){
+			// BGMが再生されていれば何もしない
+		} else {
+			cc.audioEngine.setMusicVolume(1);// 音量の設定 0 ~ 1の範囲
+			cc.audioEngine.playMusic("res/bgm/Strategy.mp3", true);
+			
+		}
+		
 	},
 
 });
