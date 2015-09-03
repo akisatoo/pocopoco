@@ -6,6 +6,8 @@ var Scene = Scene || {};
 
 var GameLayer = cc.LayerColor.extend({
 	sprite: null,
+	playCountDown: null,
+	
 	ctor: function (config) {
 		config = config || {};
 
@@ -73,6 +75,21 @@ var GameLayer = cc.LayerColor.extend({
 		
 		//ゲームスタートまでのカウントダウン
 		self.countDown = 3;
+		
+		self.defenceCount = 30;
+		
+		switch(self.dungeonData.type) {
+		case 'defence':						
+			//ゲーム中のカウント
+			self.playCountDown = cc.LabelTTF(self.defenceCount, "MisakiGthic", 80);
+			self.playCountDown.setColor(cc.color(0, 0, 0));
+			self.playCountDown.setPosition(size.width / 2, size.height);
+			self.playCountDown.setAnchorPoint(0.5, 1.0);
+			manager.gameStage.addChild(self.playCountDown);
+
+			break;
+		};
+		
 		//アップデートの処理を制限しない
 		self.isUpdate = true;
 		
@@ -102,29 +119,38 @@ var GameLayer = cc.LayerColor.extend({
 	
 	myLevel: 1,
 	dungeonData: null,	//ダンジョン情報
-	heros: [],	//ヒーローの管理配列
-	enemys: [],	//敵の管理配列
-	countDown: 0,	//開始までのカウントダウン
+	heros: [],			//ヒーローの管理配列
+	enemys: [],			//敵の管理配列
+	countDown: 0,		//開始までのカウントダウン
+	defenceCount: 0,	//ゲーム中のカウント
 	
 	/**
 	 * カウントダウン開始
 	 */
 	startCountDown: function (label) {
 		var self = this;
+		var size = cc.winSize;
 		var countInterval = setInterval(function () {
 			self.countDown -= 1;
 
-			if (self.countDown <= 0) {
+			if (self.countDown <= 0) {				
 				clearInterval(countInterval);
+				
 				label.setString('GO!!');
+				
+				if(self.dungeonData.type === 'defence') {
+					self.startDefenceCount(self.playCountDown);
+				}
 
 				var fadeout = cc.FadeOut(2);
 				//動作後の処理
-				var comp = new cc.CallFunc(function () {
+				var comp = new cc.CallFunc(function () {					
 					self.removeChild(label);
 					label = null;
+					
 					return;
 				}, self);
+				
 				var seq = cc.Sequence.create(fadeout, comp);
 				label.runAction(seq);
 
@@ -147,7 +173,7 @@ var GameLayer = cc.LayerColor.extend({
 			return;
 		}
 		
-		if (self.countDown > 0) {
+		if (self.countDown > 0 || self.defenceCount < 0) {
 			return;
 		}
 		
@@ -176,6 +202,38 @@ var GameLayer = cc.LayerColor.extend({
 			return;
 		});
 		
+	},
+	
+	
+	startDefenceCount: function(label) {
+		var self = this;
+		
+		var defenceInterval = setInterval(function(){
+			self.defenceCount--;
+			if(self.defenceCount <= 0) {
+				clearInterval(defenceInterval);
+				
+				//ゲームシーンのupdateを止める
+				manager.gameStage.stopUpdate();
+				// TODO: ボス戦、次ステージ、クリア、オーバー画面で処理を切り分け
+				if (manager.gameStage.myLevel < manager.gameStage.dungeonData.level) {
+					//ゲームシーン
+					cc.director.runScene(cc.TransitionSlideInB(1.2, new GameScene({
+						level: manager.gameStage.myLevel + 1,
+						dungeonData: manager.gameStage.dungeonData
+					})));
+					return;
+				}
+
+				//リザルトシーン
+				cc.director.runScene(cc.TransitionTurnOffTiles(1.2, new ResultScene()));
+			}
+			label.setString(self.defenceCount);
+			
+			return;
+		}, 1000);
+		
+		return;
 	},
 	
 	

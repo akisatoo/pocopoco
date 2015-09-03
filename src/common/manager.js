@@ -112,13 +112,13 @@ var Manager = null;
 			{
 				id: 1,
 				name: 'ダンジョン1',
-				type: 'vertical',
+				type: 'defence',
 				level: 3
 			},
 			{
 				id: 2,
 				name: 'ダンジョン2',
-				type: 'vertical',
+				type: 'straight',
 				level: 3
 			},
 			{

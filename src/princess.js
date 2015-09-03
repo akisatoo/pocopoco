@@ -37,21 +37,21 @@ var Princess = null;
 			var goalPos = {};
 			
 			switch (dungeonType) {
-				case 'vertical':
+				case 'defence':
 					//スタート地点
-					startPos.x = size.width / 2 - self.chara.width;
-					startPos.y = self.chara.height / 2;
-					//ゴール地点
-					goalPos.x = size.width / 2 + self.chara.width;
-					goalPos.y = size.height - self.chara.height / 2;
-					break;
-				case 'horizontal':
-					//スタート地点
-					startPos.x = self.chara.width / 2;
+					startPos.x = size.width /2;
 					startPos.y = size.height / 2;
 					//ゴール地点
-					goalPos.x = size.width - self.chara.width / 2;
-					goalPos.y = size.height / 2;
+					goalPos.x = startPos.x;
+					goalPos.y = startPos.y;
+					break;
+				case 'straigth':
+					//スタート地点
+					startPos.x = size.width / 2;
+					startPos.y = self.chara.height;
+					//ゴール地点
+					goalPos.x = startPos.x;
+					goalPos.y = size.height;
 					break;
 				default:
 					//スタート地点
@@ -94,6 +94,10 @@ var Princess = null;
 		 */
 		moveStart: function () {
 			var self = this;
+			
+			if(manager.gameStage.dungeonData.type === 'defence') {
+				return;
+			}
 
 			//ターゲットまで移動
 			self._moveToTarget({
@@ -103,7 +107,6 @@ var Princess = null;
 					if (self.sceneType === 'title') {
 						return;
 					}
-					//return;
 					
 					//ゲームシーンのupdateを止める
 					manager.gameStage.stopUpdate();
