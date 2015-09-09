@@ -92,22 +92,27 @@ var DungeonSelectLayer = cc.LayerColor.extend({
     	 sprite.setAnchorPoint(0.0, 0.5);
     	 sprite.setPosition(self.margin.width, self.margin.height);
     	 cell.addChild(sprite);
-    	 
-    	 //背景
-		 /*var bg = cc.LayerColor();
-		 bg.setColor(cc.color(255, 255, 255));
-		 bg.setContentSize(cc.winSize.width - (self.margin.width * 2), self.celHeight - (self.margin.height * 2));
-		 bg.setAnchorPoint(0.5, 0.5);
-		 bg.setPosition(self.margin.width, self.margin.height);
-		 cell.addChild(bg);*/
 		 
     	 var bgSize = sprite.getContentSize();
+    	 
+    	 var func = function() {
+    		 self.onTouchedMenu(cell);
+    	 }
+    	 
 		 //ダンジョン名
-		 var label = cc.LabelTTF(manager.dungeonList[idx].name, "Helvetica", 30);
+		 /*var label = cc.LabelTTF(manager.dungeonList[idx].name, "Helvetica", 30);
 		 label.setColor(cc.color(0, 0, 0));
 		 label.setPosition(50, bgSize.height / 2);
 		 label.setAnchorPoint(0, 0.5);
-		 sprite.addChild(label);
+		 sprite.addChild(label);*/
+		 
+    	 var itemFont = cc.MenuItemFont(manager.dungeonList[idx].name, func);
+		 itemFont.setAnchorPoint(0, 0.5);
+
+		 var menu = cc.Menu(itemFont);
+		 menu.setColor(cc.color(0, 0, 0));
+		 menu.setPosition(50, bgSize.height / 2);
+		 sprite.addChild(menu);
 		 
     	 return cell;
      },
@@ -128,7 +133,7 @@ var DungeonSelectLayer = cc.LayerColor.extend({
       * @returns {Boolean}
       */
      tableCellTouched: function (table, cell) {
-    	 cc.log('DungeonName: ' + cell.data.name);
+    	 /*cc.log('DungeonName: ' + cell.data.name);
     	 
     	 //キャラクター選択シーンに飛ばす
     	 cc.director.runScene(cc.TransitionFade(1.2, new CharacterSelectScene({
@@ -136,7 +141,18 @@ var DungeonSelectLayer = cc.LayerColor.extend({
     		 pageType: 'dungeon',
     		 dungeonData: cell.data
     	 })));
-    	 return true;
+    	 return true;*/
+     },
+     
+     onTouchedMenu: function(cell) {
+    	 cc.log('SettingMenu: ' + cell.data.title);
+
+    	 cc.director.runScene(cc.TransitionFade(1.2, new CharacterSelectScene({
+    		 level: 1,
+    		 pageType: 'dungeon',
+    		 dungeonData: cell.data
+    	 })));
+
      }
 });
 
