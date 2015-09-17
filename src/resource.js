@@ -17,6 +17,7 @@ var res = {
     SlotframeSelect: "res/slot/slotframe_select.png",
     PrincessRight1: "res/princess/princess_right1.png",
     PrincessRight2: "res/princess/princess_right2.png",
+    PrincessCaugth: "res/princess_caugth/princess_caugth",
     HeroRight1: "res/hero/hero_right1.png",
     HeroRight2: "res/hero/hero_right2.png",
     HeroLeft1: "res/hero/hero_left1.png",

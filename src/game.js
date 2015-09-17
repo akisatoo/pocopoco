@@ -56,21 +56,25 @@ var GameLayer = cc.LayerColor.extend({
 		gameStage.addChild(self.slotBlock, 9999);
 		
 		//姫様
-		self.princess = new Princess({
-			dungeonType: self.dungeonData.type,
-			image: res.PrincessRight1
-		});
-		gameStage.addChild(self.princess);
-		
-		//敵の生成
-		var enemyMax = 10;
-		for (var i = 0; i < enemyMax; i++) {
-			var enemy = new BaseEnemy(_.extend({}, manager.enemyDataList["underling"], {
+		if(self.dungeonData.type !== 'rescue') {
+			self.princess = new Princess({
 				dungeonType: self.dungeonData.type,
-				target: self.princess
-			}));
-			gameStage.addChild(enemy);
-			self.enemys.push(enemy);
+				image: res.PrincessRight1
+			});
+			gameStage.addChild(self.princess);
+		}
+		
+		if(self.dungeonData.type !== "rescue") {
+			//敵の生成
+			var enemyMax = 10;
+			for (var i = 0; i < enemyMax; i++) {
+				var enemy = new BaseEnemy(_.extend({}, manager.enemyDataList["underling"], {
+					dungeonType: self.dungeonData.type,
+					target: self.princess
+				}));
+				gameStage.addChild(enemy);
+				self.enemys.push(enemy);
+			}
 		}
 		
 		//ゲームスタートまでのカウントダウン
@@ -87,6 +91,14 @@ var GameLayer = cc.LayerColor.extend({
 			self.playCountDown.setAnchorPoint(0.5, 1.0);
 			manager.gameStage.addChild(self.playCountDown);
 
+			break;
+		case 'rescue':
+			var princessCaught = new PrincessCaugth(_.extend({}, manager.enemyDataList["caughtprincess"], {
+				dungeonType: self.dungeonData.type,
+				x: size.width / 2,
+				y: size.height
+			}));
+			gameStage.addChild(princessCaught);
 			break;
 		};
 		
@@ -153,8 +165,10 @@ var GameLayer = cc.LayerColor.extend({
 				
 				var seq = cc.Sequence.create(fadeout, comp);
 				label.runAction(seq);
-
-				self.princess._instance.moveStart();
+				
+				if(self.princess != null) {
+					self.princess._instance.moveStart();
+				}
 				return;
 			}
 			label.setString(self.countDown);
@@ -177,7 +191,9 @@ var GameLayer = cc.LayerColor.extend({
 			return;
 		}
 		
-		self.princess._instance.update();	//姫のupdate
+		if(self.princess != null) {
+			self.princess._instance.update();	//姫のupdate
+		}
 		
 		_.each(self.enemys, function (enemy, index) {
 			if (!enemy) {

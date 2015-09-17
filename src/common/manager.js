@@ -133,6 +133,12 @@ var Manager = null;
 				type: 'vertical',
 				level: 3
 			},
+			{
+				id: 5,
+				name: 'BOSSダンジョン',
+				type: 'rescue',
+				level: 3
+			},
 		],
 		
 		/**
@@ -323,13 +329,28 @@ var Manager = null;
 				"speed": 1,
 				"level": 1,
 				"exp": 0
+			},
+			"caughtprincess": {
+				"id": 2,
+				"name": "caughtprincess",
+				"image": "res/princess_caught/princess_caught.png",
+				"animPattern":{
+					"normal": ["res/princess_caught/princess_caught.png"],
+					"right": ["res/princess_caught/princess_caught.png"],
+					"left": ["res/princess_caught/princess_caught.png"]
+				},
+				"movePattern": 0,
+				"hitpoint": 200,
+				"attack": 0,
+				"speed": 0,
+				"level": 1,
+				"exp": 100
 			}
 		},
 		
 		/**
 		 * BGM再生のON,OFF用
 		 */
-		
 		getBgm: function () {
 			bgmState = cc.sys.localStorage.getItem('bgmState');
 			return bgmState;
