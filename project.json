@@ -25,6 +25,7 @@
     "src/slotcharacter.js",
     "src/slot.js",
     "src/princess.js",
+    "src/princessCaugth.js",
     "src/app.js",
     "src/characterMenu.js",
     "src/game.js",
